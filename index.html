@@ -34,8 +34,21 @@
     </script>
     <style>
         body {
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-image 0.3s ease, background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* Nền chế độ Sáng */
+        html.light body, body {
+            background-image: linear-gradient(to bottom, rgba(242, 243, 245, 0.92), rgba(242, 243, 245, 0.95)), 
+                              url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
+        }
+
+        /* Nền chế độ Tối: Làm tối tone màu đen/xanh đậm nhưng làm lớp phủ mỏng hơn (0.75) để lộ rõ chi tiết ảnh phía sau */
+        html.dark body {
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                              url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
+        }
+
         .active-tab-nav {
             color: #a33300 !important;
             border-bottom: 3px solid #a33300;
@@ -66,7 +79,7 @@
         }
     </style>
 </head>
-<body class="bg-[#f2f3f5] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased bg-fixed bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(to bottom, rgba(242, 243, 245, 0.92), rgba(242, 243, 245, 0.95)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');">
+<body class="bg-fixed bg-cover bg-center bg-no-repeat text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased">
 
     <!-- HEADER / NAVIGATION BAR -->
     <header class="bg-[#3b3d45] text-white border-b border-slate-700 shadow-md sticky top-0 z-40">
@@ -118,16 +131,16 @@
 
         <!-- LEFT SIDEBAR -->
         <aside class="lg:col-span-3 space-y-3">
-            <button onclick="switchTab('intro')" id="side-btn-intro" class="sidebar-btn active-sidebar w-full flex items-center gap-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button onclick="switchTab('intro')" id="side-btn-intro" class="sidebar-btn active-sidebar w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-circle-info text-slate-400 text-lg"></i> Giới Thiệu
             </button>
-            <button onclick="switchTab('members')" id="side-btn-members" class="sidebar-btn w-full flex items-center gap-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button onclick="switchTab('members')" id="side-btn-members" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-users text-slate-400 text-lg"></i> Thành Viên
             </button>
-            <button onclick="switchTab('assignments')" id="side-btn-assignments" class="sidebar-btn w-full flex items-center gap-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button onclick="switchTab('assignments')" id="side-btn-assignments" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-list-check text-slate-400 text-lg"></i> Bài Tập Nhóm
             </button>
-            <button onclick="switchTab('documents')" id="side-btn-documents" class="sidebar-btn w-full flex items-center gap-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button onclick="switchTab('documents')" id="side-btn-documents" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-folder-open text-slate-400 text-lg"></i> Kho Tài Liệu
             </button>
         </aside>
@@ -137,7 +150,7 @@
 
             <!-- TAB 1: GIỚI THIỆU / TỔNG QUAN -->
             <div id="section-intro" class="space-y-6">
-                <article class="relative bg-slate-900 text-white rounded-2xl border border-slate-700 p-8 shadow-xl space-y-6 overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.60)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80');">
+                <article class="relative bg-slate-900/85 backdrop-blur-md text-white rounded-2xl border border-slate-700 p-8 shadow-xl space-y-6 overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.60)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80');">
                     <div class="flex justify-between items-center text-sm text-slate-300">
                         <div class="flex items-center gap-2 font-medium">
                             <span class="font-bold text-white flex items-center gap-1.5 text-base">
@@ -168,7 +181,7 @@
 
             <!-- TAB 2: THÀNH VIÊN -->
             <div id="section-members" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex justify-between items-center">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-users text-[#a33300]"></i> Thành Viên Nhóm
                     </h2>
@@ -183,7 +196,7 @@
 
             <!-- TAB 3: BÀI TẬP -->
             <div id="section-assignments" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-list-check text-[#a33300]"></i> Bài Tập & Phân Công
                     </h2>
@@ -192,9 +205,9 @@
                     </button>
                 </div>
 
-                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-4 justify-between">
-                    <input type="text" id="assignment-search" oninput="renderAssignments()" placeholder="Tìm tên bài tập, môn học..." class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow text-slate-800 dark:text-slate-100">
-                    <select id="assignment-status-filter" onchange="renderAssignments()" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-slate-800 dark:text-slate-100">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row gap-4 justify-between">
+                    <input type="text" id="assignment-search" oninput="renderAssignments()" placeholder="Tìm tên bài tập, môn học..." class="px-4 py-2 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow text-slate-800 dark:text-slate-100">
+                    <select id="assignment-status-filter" onchange="renderAssignments()" class="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-slate-800 dark:text-slate-100">
                         <option value="ALL">Tất cả trạng thái</option>
                         <option value="Mới">Mới</option>
                         <option value="Đang làm">Đang làm</option>
@@ -209,12 +222,12 @@
 
             <!-- TAB 4: TÀI LIỆU -->
             <div id="section-documents" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-folder-closed text-[#a33300]"></i> Chia Sẻ Tài Liệu Học Tập
                     </h2>
 
-                    <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-sm">
+                    <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="bg-slate-50 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-sm">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên tài liệu *</label>
@@ -256,7 +269,7 @@
                     </form>
                 </div>
 
-                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
                     <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
                         <thead class="bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 font-bold uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700">
                             <tr>
@@ -377,7 +390,7 @@
     </div>
 
     <!-- FOOTER -->
-    <footer class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-sm text-slate-500 dark:text-slate-400">
+    <footer class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-sm text-slate-500 dark:text-slate-400">
         <p class="font-bold text-slate-700 dark:text-slate-200">NHÓM 2 - CNCN | HỆ THỐNG QUẢN LÝ VÀ CHIA SẺ HỌC TẬP</p>
         <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase</p>
     </footer>
@@ -551,9 +564,11 @@
             const themeIcon = document.getElementById('theme-icon');
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
+                html.classList.add('light');
                 themeIcon.className = "fa-solid fa-moon";
                 localStorage.setItem('theme', 'light');
             } else {
+                html.classList.remove('light');
                 html.classList.add('dark');
                 themeIcon.className = "fa-solid fa-sun text-amber-400";
                 localStorage.setItem('theme', 'dark');
@@ -562,6 +577,7 @@
 
         // Khôi phục Chế độ Sáng/Tối đã lưu
         if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.remove('light');
             document.documentElement.classList.add('dark');
             document.addEventListener("DOMContentLoaded", () => {
                 const themeIcon = document.getElementById('theme-icon');
@@ -607,14 +623,14 @@
             const members = window.cloudData.members || [];
 
             if (members.length === 0) {
-                grid.innerHTML = `<div class="col-span-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-8 rounded-2xl border border-slate-200 dark:border-slate-700 text-center font-medium text-slate-400 text-sm">Chưa có thành viên nào trong NHÓM 2 - CNCN.</div>`;
+                grid.innerHTML = `<div class="col-span-full bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-8 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-center font-medium text-slate-400 text-sm">Chưa có thành viên nào trong NHÓM 2 - CNCN.</div>`;
                 return;
             }
 
             members.forEach(m => {
                 const avatarUrl = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
                 const card = document.createElement('div');
-                card.className = "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-all";
+                card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-all";
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button onclick="openMemberModal('${m.id}')" title="Chỉnh sửa thành viên" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
@@ -711,7 +727,7 @@
             });
 
             if (filtered.length === 0) {
-                list.innerHTML = `<div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-8 rounded-2xl border border-slate-200 dark:border-slate-700 text-center font-medium text-slate-400 text-sm">Chưa có bài tập nào.</div>`;
+                list.innerHTML = `<div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-8 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-center font-medium text-slate-400 text-sm">Chưa có bài tập nào.</div>`;
                 return;
             }
 
@@ -721,7 +737,7 @@
                 if (a.status === 'Đã nộp/Đã hoàn thành') statusBadge = 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
 
                 const card = document.createElement('div');
-                card.className = "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 text-sm group hover:shadow-md transition-all";
+                card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4 text-sm group hover:shadow-md transition-all";
                 
                 let fileButton = '';
                 if (a.fileData) {
