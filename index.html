@@ -90,16 +90,16 @@
                     <span class="text-blue-500">NHÓM 2</span> <span class="text-red-500">- CNCN</span>
                 </div>
                 <nav class="hidden md:flex space-x-8 text-sm font-bold uppercase tracking-wider text-slate-300">
-                    <button onclick="switchTab('intro')" id="tab-btn-intro" class="nav-tab active-tab-nav py-5 hover:text-white transition-colors flex items-center gap-2">
+                    <button type="button" onclick="switchTab('intro')" id="tab-btn-intro" class="nav-tab active-tab-nav py-5 hover:text-white transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-compass text-base"></i> Tổng Quan
                     </button>
-                    <button onclick="switchTab('members')" id="tab-btn-members" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
+                    <button type="button" onclick="switchTab('members')" id="tab-btn-members" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-users text-base"></i> Thành Viên
                     </button>
-                    <button onclick="switchTab('assignments')" id="tab-btn-assignments" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
+                    <button type="button" onclick="switchTab('assignments')" id="tab-btn-assignments" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-base"></i> Bài Tập
                     </button>
-                    <button onclick="switchTab('documents')" id="tab-btn-documents" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
+                    <button type="button" onclick="switchTab('documents')" id="tab-btn-documents" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-folder-closed text-base"></i> Kho Tài Liệu
                     </button>
                 </nav>
@@ -112,7 +112,7 @@
                     <span id="status-text" class="font-semibold text-slate-300">Đang kết nối...</span>
                 </div>
                 
-                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl hover:bg-slate-700 text-amber-300 hover:text-amber-200 transition-all text-base flex items-center justify-center" title="Đổi chế độ Sáng/Tối">
+                <button type="button" onclick="toggleDarkMode()" class="p-2.5 rounded-xl hover:bg-slate-700 text-amber-300 hover:text-amber-200 transition-all text-base flex items-center justify-center" title="Đổi chế độ Sáng/Tối">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                 </button>
             </div>
@@ -120,7 +120,7 @@
     </header>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-50 bg-slate-900 text-white px-6 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 text-sm">
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-50 bg-slate-900 text-white px-6 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 text-sm pointer-events-none">
         <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
         <span id="toast-msg" class="font-medium">Thông báo</span>
     </div>
@@ -130,16 +130,16 @@
 
         <!-- LEFT SIDEBAR -->
         <aside class="lg:col-span-3 space-y-3">
-            <button onclick="switchTab('intro')" id="side-btn-intro" class="sidebar-btn active-sidebar w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button type="button" onclick="switchTab('intro')" id="side-btn-intro" class="sidebar-btn active-sidebar w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-circle-info text-slate-400 text-lg"></i> Giới Thiệu
             </button>
-            <button onclick="switchTab('members')" id="side-btn-members" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button type="button" onclick="switchTab('members')" id="side-btn-members" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-users text-slate-400 text-lg"></i> Thành Viên
             </button>
-            <button onclick="switchTab('assignments')" id="side-btn-assignments" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button type="button" onclick="switchTab('assignments')" id="side-btn-assignments" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-list-check text-slate-400 text-lg"></i> Bài Tập Nhóm
             </button>
-            <button onclick="switchTab('documents')" id="side-btn-documents" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
+            <button type="button" onclick="switchTab('documents')" id="side-btn-documents" class="sidebar-btn w-full flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-3 rounded-xl font-bold text-base border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-sm">
                 <i class="fa-solid fa-folder-open text-slate-400 text-lg"></i> Kho Tài Liệu
             </button>
         </aside>
@@ -168,10 +168,10 @@
                     </p>
 
                     <div class="flex items-center gap-4 pt-4 border-t border-slate-700/80">
-                        <button onclick="switchTab('assignments')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-6 py-3 rounded-xl shadow-md flex items-center gap-2 transition-all">
+                        <button type="button" onclick="switchTab('assignments')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-6 py-3 rounded-xl shadow-md flex items-center gap-2 transition-all">
                             <i class="fa-solid fa-file-arrow-up text-base"></i> Nộp Bài Tập Ngay
                         </button>
-                        <button onclick="switchTab('members')" class="bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all">
+                        <button type="button" onclick="switchTab('members')" class="bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all">
                             <i class="fa-solid fa-users text-base"></i> Thành Viên Nhóm
                         </button>
                     </div>
@@ -184,7 +184,7 @@
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-users text-[#a33300]"></i> Thành Viên Nhóm
                     </h2>
-                    <button onclick="openMemberModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
+                    <button type="button" onclick="openMemberModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
                         <i class="fa-solid fa-user-plus"></i> Thêm Thành Viên
                     </button>
                 </div>
@@ -199,7 +199,7 @@
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-list-check text-[#a33300]"></i> Bài Tập & Phân Công
                     </h2>
-                    <button onclick="openAssignmentModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
+                    <button type="button" onclick="openAssignmentModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
                         <i class="fa-solid fa-circle-plus"></i> Tạo Bài Tập / Nộp Bài
                     </button>
                 </div>
@@ -294,13 +294,13 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50">
                 <h3 class="font-bold text-base text-slate-800 dark:text-white">Thêm / Chỉnh Sửa Thành Viên</h3>
-                <button onclick="closeMemberModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button type="button" onclick="closeMemberModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="member-form" onsubmit="saveMember(event)" class="p-6 space-y-4 text-sm">
                 <input type="hidden" id="member-id">
                 
                 <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-14 h-14 rounded-xl border object-cover bg-white">
+                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-14 h-14 rounded-xl border object-cover bg-white" alt="Avatar Preview">
                     <div>
                         <button type="button" onclick="generateRandomAvatar()" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold px-3 py-1.5 rounded-lg border dark:border-slate-600 transition-all text-xs">
                             <i class="fa-solid fa-dice"></i> Đổi Avatar Ngẫu Nhiên
@@ -343,7 +343,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700">
             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50">
                 <h3 class="font-bold text-base text-slate-800 dark:text-white">Tạo / Chỉnh Sửa Bài Tập</h3>
-                <button onclick="closeAssignmentModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button type="button" onclick="closeAssignmentModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="assignment-form" onsubmit="saveAssignment(event)" class="p-6 space-y-4 text-sm">
                 <input type="hidden" id="assignment-id">
@@ -396,6 +396,29 @@
         <p class="font-bold text-slate-700 dark:text-slate-200">NHÓM 2 - CNCN | HỆ THỐNG QUẢN LÝ VÀ CHIA SẺ HỌC TẬP</p>
         <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase</p>
     </footer>
+
+    <!-- GLOBAL TOAST NOTIFICATION UTILITY -->
+    <script>
+        window.showToast = function(message, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            document.getElementById('toast-msg').innerText = message;
+
+            if (type === "error") {
+                toastIcon.className = "fa-solid fa-circle-xmark text-rose-500 text-xl";
+            } else if (type === "info") {
+                toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-xl";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl";
+            }
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        };
+    </script>
 
     <!-- FIREBASE MODULE & REALTIME CLOUD LOGIC -->
     <script type="module">
@@ -476,21 +499,21 @@
                 const list = [];
                 snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
                 window.cloudData.members = list;
-                window.renderMembers();
+                if (typeof window.renderMembers === 'function') window.renderMembers();
             });
 
             onSnapshot(ASSIGNMENTS_PATH, (snapshot) => {
                 const list = [];
                 snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
                 window.cloudData.assignments = list;
-                window.renderAssignments();
+                if (typeof window.renderAssignments === 'function') window.renderAssignments();
             });
 
             onSnapshot(DOCUMENTS_PATH, (snapshot) => {
                 const list = [];
                 snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
                 window.cloudData.documents = list;
-                window.renderDocuments();
+                if (typeof window.renderDocuments === 'function') window.renderDocuments();
             });
         }
 
@@ -637,6 +660,7 @@
         // RENDER MEMBERS
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
+            if (!grid) return;
             grid.innerHTML = '';
             const members = window.cloudData.members || [];
 
@@ -651,7 +675,7 @@
                 card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-all";
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <button onclick="openMemberModal('${m.id}')" title="Chỉnh sửa thành viên" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
+                        <button type="button" onclick="openMemberModal('${m.id}')" title="Chỉnh sửa thành viên" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
@@ -717,6 +741,7 @@
         // RENDER ASSIGNMENTS
         window.renderAssignments = function() {
             const list = document.getElementById('assignments-list');
+            if (!list) return;
             const search = document.getElementById('assignment-search').value.toLowerCase();
             const statusFilter = document.getElementById('assignment-status-filter').value;
 
@@ -764,8 +789,8 @@
                         <span>Hạn nộp: <strong class="text-slate-800 dark:text-slate-200">${a.deadline || 'Chưa xếp'}</strong></span>
                         
                         <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <button onclick="openAssignmentModal('${a.id}')" title="Sửa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteAssignment('${a.id}')" title="Xóa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                            <button type="button" onclick="openAssignmentModal('${a.id}')" title="Sửa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" onclick="deleteAssignment('${a.id}')" title="Xóa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                     <div class="space-y-2 pt-1">
@@ -901,6 +926,7 @@
 
         window.renderDocuments = function() {
             const tbody = document.getElementById('documents-table-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             const documents = window.cloudData.documents || [];
 
@@ -917,8 +943,8 @@
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base" title="Tải về"><i class="fa-solid fa-download"></i></a>
-                        <button onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
+                        <button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -930,26 +956,6 @@
                 window.deleteDocumentFromCloud(id);
             }
         }
-
-        window.showToast = function(message, type = "success") {
-            const toast = document.getElementById('toast');
-            const toastIcon = document.getElementById('toast-icon');
-            
-            document.getElementById('toast-msg').innerText = message;
-
-            if (type === "error") {
-                toastIcon.className = "fa-solid fa-circle-xmark text-rose-500 text-xl";
-            } else if (type === "info") {
-                toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-xl";
-            } else {
-                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl";
-            }
-
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-24', 'opacity-0');
-            }, 3000);
-        };
     </script>
 </body>
 </html>
