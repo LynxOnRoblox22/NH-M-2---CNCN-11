@@ -3,42 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NHÓM 2 - Hệ Thống Quản Lý & Chia Sẻ Học Tập</title>
+    <title>NBK OJ - NHÓM 2 Hệ Thống Quản Lý & Chia Sẻ Học Tập</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font - Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace'],
                     },
-                    boxShadow: {
-                        'glow': '0 0 25px -5px rgba(59, 130, 246, 0.3)',
-                        'card': '0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+                    colors: {
+                        oj: {
+                            bg: '#f2f3f5',
+                            header: '#3b3d45',
+                            sidebar: '#a33300',
+                            sidebarHover: '#8b2b00',
+                            card: '#ffffff'
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
+        body {
+            background-color: #f2f3f5;
+        }
         .active-tab {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
-            color: #2563eb;
-            font-weight: 700;
-            border-bottom: 2px solid #2563eb;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            color: #a33300 !important;
+            border-bottom: 2px solid #a33300;
         }
         ::-webkit-scrollbar {
             width: 6px;
@@ -53,261 +52,224 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+<body class="text-slate-800 font-sans min-h-screen flex flex-col antialiased">
 
-    <!-- HEADER / NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <!-- Logo NHÓM 2 -->
-                <div class="flex items-center gap-3.5 cursor-pointer group" onclick="switchTab('intro')">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                        N2
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent tracking-tight">NHÓM 2</span>
-                            <span class="hidden sm:inline-flex items-center gap-1 text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200/60">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Realtime Cloud
-                            </span>
-                        </div>
-                        <p class="text-[11px] text-slate-400 font-medium hidden sm:block">Không gian học tập & quản lý nhóm</p>
-                    </div>
+    <!-- HEADER / NAVIGATION BAR (DMOJ Style) -->
+    <header class="bg-[#3b3d45] text-white border-b border-slate-700 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-14">
+            <!-- Logo & Nav Links -->
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center gap-1 font-black text-2xl tracking-tighter text-white cursor-pointer" onclick="switchTab('intro')">
+                    <span class="text-blue-500">NBK</span><span class="text-red-500">OJ</span>
                 </div>
-
-                <!-- Navigation Tabs -->
-                <nav class="hidden md:flex space-x-2 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
-                    <button onclick="switchTab('intro')" id="tab-btn-intro" class="nav-tab active-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-blue-600 transition-all">
-                        <i class="fa-solid fa-compass text-xs"></i> Tổng Quan
+                <nav class="hidden md:flex space-x-4 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <button onclick="switchTab('intro')" id="tab-btn-intro" class="nav-tab active-tab py-4 hover:text-white transition-colors">
+                        <i class="fa-solid fa-compass mr-1"></i> Tổng Quan
                     </button>
-                    <button onclick="switchTab('members')" id="tab-btn-members" class="nav-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-blue-600 transition-all">
-                        <i class="fa-solid fa-users text-xs"></i> Thành Viên
+                    <button onclick="switchTab('members')" id="tab-btn-members" class="nav-tab py-4 hover:text-white transition-colors">
+                        <i class="fa-solid fa-users mr-1"></i> Thành Viên
                     </button>
-                    <button onclick="switchTab('assignments')" id="tab-btn-assignments" class="nav-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-blue-600 transition-all">
-                        <i class="fa-solid fa-list-check text-xs"></i> Bài Tập Nhóm
+                    <button onclick="switchTab('assignments')" id="tab-btn-assignments" class="nav-tab py-4 hover:text-white transition-colors">
+                        <i class="fa-solid fa-list-check mr-1"></i> Bài Tập
                     </button>
-                    <button onclick="switchTab('documents')" id="tab-btn-documents" class="nav-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-blue-600 transition-all">
-                        <i class="fa-solid fa-folder-closed text-xs"></i> Kho Tài Liệu
+                    <button onclick="switchTab('documents')" id="tab-btn-documents" class="nav-tab py-4 hover:text-white transition-colors">
+                        <i class="fa-solid fa-folder-closed mr-1"></i> Kho Tài Liệu
                     </button>
                 </nav>
+            </div>
 
-                <!-- Status Indicator -->
-                <div class="flex items-center gap-3">
-                    <div id="cloud-status" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100/80 text-xs text-slate-600 border border-slate-200">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
-                        <span id="status-text" class="font-medium">Đang kết nối...</span>
-                    </div>
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-slate-600 hover:text-blue-600 p-2 rounded-xl border border-slate-200">
-                        <i class="fa-solid fa-bars text-lg"></i>
-                    </button>
+            <!-- Header Right Status & Profile -->
+            <div class="flex items-center space-x-4 text-sm text-slate-300">
+                <div id="cloud-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-xs border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
+                    <span id="status-text" class="font-medium text-slate-300">Đang kết nối...</span>
+                </div>
+                
+                <button class="hover:text-white text-xs"><i class="fa-solid fa-moon"></i></button>
+                <div class="flex items-center gap-1 cursor-pointer">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=mlhthuongk24" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-600">
+                    <i class="fa-solid fa-chevron-down text-[10px]"></i>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Menu Nav -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-lg px-4 pt-3 pb-4 space-y-2 shadow-xl">
-            <button onclick="switchTab('intro'); toggleMobileMenu()" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-blue-50 font-semibold">
-                <i class="fa-solid fa-compass w-5 text-blue-600"></i> Tổng Quan
-            </button>
-            <button onclick="switchTab('members'); toggleMobileMenu()" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-blue-50 font-semibold">
-                <i class="fa-solid fa-users w-5 text-blue-600"></i> Thành Viên
-            </button>
-            <button onclick="switchTab('assignments'); toggleMobileMenu()" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-blue-50 font-semibold">
-                <i class="fa-solid fa-list-check w-5 text-blue-600"></i> Bài Tập Nhóm
-            </button>
-            <button onclick="switchTab('documents'); toggleMobileMenu()" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-blue-50 font-semibold">
-                <i class="fa-solid fa-folder-closed w-5 text-blue-600"></i> Kho Tài Liệu
-            </button>
         </div>
     </header>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-50 bg-slate-900/90 backdrop-blur-md text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3.5 border border-slate-700">
-        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
-        <span id="toast-msg" class="text-sm font-medium">Thông báo</span>
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-msg" class="text-xs font-medium">Thông báo</span>
     </div>
 
-    <!-- MAIN CONTAINER -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- MAIN CONTAINER (3 Columns) -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- TRANG ĐẦU: GIỚI THIỆU -->
-        <section id="section-intro" class="space-y-8">
-            <!-- Banner Hero -->
-            <div class="relative overflow-hidden rounded-3xl gradient-bg p-8 sm:p-14 text-white shadow-2xl border border-slate-800">
-                <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <div class="relative z-10 max-w-3xl space-y-6">
-                    <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-blue-300">
-                        <i class="fa-solid fa-sparkles"></i> Nền Tảng Học Tập Thông Minh
-                    </span>
-                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
-                        Quản Lý Học Tập <br class="hidden sm:block"/>
-                        <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">Bứt Phá Hiệu Quả NHÓM 2</span>
-                    </h1>
-                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
-                        Nơi làm việc tập trung dành riêng cho NHÓM 2: Phân công công việc, tải tệp bài tập, lưu trữ tài liệu học tập và theo dõi tiến độ theo thời gian thực.
-                    </p>
-                    <div class="pt-2 flex flex-wrap gap-4">
-                        <button onclick="switchTab('assignments')" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-7 py-3.5 rounded-2xl shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+        <!-- LEFT SIDEBAR -->
+        <aside class="lg:col-span-2 space-y-2">
+            <button onclick="switchTab('intro')" class="w-full flex items-center gap-3 bg-[#a33300] hover:bg-[#8b2b00] text-white px-4 py-2.5 rounded-lg font-bold text-sm shadow-sm transition-all">
+                <i class="fa-solid fa-rss"></i> News / Bảng Tín
+            </button>
+            <button onclick="switchTab('assignments')" class="w-full flex items-center gap-3 bg-white text-slate-700 px-4 py-2.5 rounded-lg font-bold text-sm border border-slate-200 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-comments text-slate-400"></i> Bài Tập Nhóm
+            </button>
+            <button onclick="switchTab('documents')" class="w-full flex items-center gap-3 bg-white text-slate-700 px-4 py-2.5 rounded-lg font-bold text-sm border border-slate-200 hover:bg-slate-50 transition-all">
+                <i class="fa-solid fa-circle-question text-slate-400"></i> Kho Tài Liệu
+            </button>
+        </aside>
+
+        <!-- CENTER CONTENT (MAIN FEED & TABS) -->
+        <section class="lg:col-span-7 space-y-4">
+
+            <!-- TAB 1: GIỚI THIỆU / TỔNG QUAN -->
+            <div id="section-intro" class="space-y-4">
+                <div class="flex justify-between items-center text-xs border-b border-slate-300 pb-2">
+                    <div class="flex space-x-4 font-bold uppercase tracking-wider">
+                        <span class="text-[#a33300] border-b-2 border-[#a33300] pb-2">OFFICIAL</span>
+                        <span class="text-slate-500">GROUP</span>
+                        <span class="text-slate-500">PUBLIC</span>
+                    </div>
+                    <div class="text-slate-500 text-xs">Order by: <span class="font-bold text-slate-700">Newest</span></div>
+                </div>
+
+                <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center text-xs text-slate-500">
+                        <div class="flex items-center gap-1.5 font-medium">
+                            <span class="font-bold text-slate-900 flex items-center gap-1">
+                                <i class="fa-solid fa-snowflake text-blue-500"></i> admin
+                            </span>
+                            <span>• NHÓM 2 Realtime Cloud •</span>
+                            <i class="fa-solid fa-star text-slate-400"></i>
+                        </div>
+                        <div class="flex items-center gap-1 text-slate-400 font-bold">
+                            <i class="fa-regular fa-comment"></i> 0
+                        </div>
+                    </div>
+
+                    <h1 class="text-2xl font-bold text-blue-600 hover:underline cursor-pointer">Chào mừng đến với Hệ Thống Quản Lý NHÓM 2</h1>
+                    <p class="text-sm text-slate-700">Nơi làm việc tập trung: Phân công công việc, tải tệp bài tập, lưu trữ tài liệu học tập và theo dõi tiến độ theo thời gian thực.</p>
+
+                    <div class="rounded-lg overflow-hidden border border-slate-800 shadow-sm">
+                        <div class="bg-[#121212] text-slate-400 text-xs px-4 py-2 flex justify-between items-center font-mono border-b border-slate-800">
+                            <span>C++ / Python</span>
+                            <span class="text-emerald-400"><i class="fa-solid fa-check"></i> Connected</span>
+                        </div>
+                        <div class="bg-[#1e1e1e] p-4 text-xs font-mono text-slate-300 space-y-1">
+                            <div><span class="text-purple-400">#include</span> <span class="text-amber-300">&lt;iostream&gt;</span></div>
+                            <div><span class="text-blue-400">int</span> <span class="text-yellow-300">main</span>() {</div>
+                            <div class="pl-4"><span class="text-blue-300">std::cout</span> &lt;&lt; <span class="text-amber-300">"Nhom 2 Online Learning Cloud System!"</span>;</div>
+                            <div class="pl-4"><span class="text-purple-400">return</span> <span class="text-emerald-400">0</span>;</div>
+                            <div>}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <button onclick="switchTab('assignments')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
                             <i class="fa-solid fa-file-arrow-up"></i> Nộp Bài Tập Ngay
                         </button>
-                        <button onclick="switchTab('members')" class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold px-7 py-3.5 rounded-2xl transition-all flex items-center gap-2">
+                        <button onclick="switchTab('members')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-2">
                             <i class="fa-solid fa-users"></i> Thành Viên Nhóm
                         </button>
                     </div>
+                </article>
+            </div>
+
+            <!-- TAB 2: THÀNH VIÊN -->
+            <div id="section-members" class="space-y-4 hidden">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
+                    <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-[#a33300]"></i> Thành Viên Nhóm
+                    </h2>
+                    <button onclick="openMemberModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-plus"></i> Thêm Thành Viên
+                    </button>
+                </div>
+                <div id="members-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Data -->
                 </div>
             </div>
 
-            <!-- Thống kê nhanh -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-card p-6 rounded-3xl shadow-card flex items-center gap-5 hover:shadow-glow transition-all">
-                    <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold border border-blue-100">
-                        <i class="fa-solid fa-user-group"></i>
-                    </div>
-                    <div>
-                        <span class="block text-3xl font-black text-slate-900" id="stat-members-count">0</span>
-                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Thành viên nhóm</span>
-                    </div>
+            <!-- TAB 3: BÀI TẬP -->
+            <div id="section-assignments" class="space-y-4 hidden">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-[#a33300]"></i> Bài Tập & Phân Công
+                    </h2>
+                    <button onclick="openAssignmentModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus"></i> Tạo Bài Tập / Nộp Bài
+                    </button>
                 </div>
-                <div class="glass-card p-6 rounded-3xl shadow-card flex items-center gap-5 hover:shadow-glow transition-all">
-                    <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl font-bold border border-amber-100">
-                        <i class="fa-solid fa-list-check"></i>
-                    </div>
-                    <div>
-                        <span class="block text-3xl font-black text-slate-900" id="stat-assignments-count">0</span>
-                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Bài tập đang giao</span>
-                    </div>
-                </div>
-                <div class="glass-card p-6 rounded-3xl shadow-card flex items-center gap-5 hover:shadow-glow transition-all">
-                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold border border-emerald-100">
-                        <i class="fa-solid fa-folder-open"></i>
-                    </div>
-                    <div>
-                        <span class="block text-3xl font-black text-slate-900" id="stat-docs-count">0</span>
-                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Tài liệu lưu trữ</span>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- SECTION 1: THÀNH VIÊN -->
-        <section id="section-members" class="space-y-6 hidden">
-            <div class="glass-card p-6 rounded-3xl shadow-card flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Thành Viên
-                    </h1>
-                    <p class="text-slate-500 text-sm mt-1">Thông tin các thành viên tham gia học tập nhóm 2.</p>
-                </div>
-                <button onclick="openMemberModal()" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-5 py-3 rounded-2xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i> Thêm Thành Viên
-                </button>
-            </div>
-
-            <!-- Grid Danh sách Thành viên -->
-            <div id="members-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamic Data -->
-            </div>
-        </section>
-
-        <!-- SECTION 2: BÀI TẬP -->
-        <section id="section-assignments" class="space-y-6 hidden">
-            <div class="glass-card p-6 rounded-3xl shadow-card flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-blue-600"></i> Bài Tập & Phân Công
-                    </h1>
-                    <p class="text-slate-500 text-sm mt-1">Nộp bài tập bằng link hoặc tải trực tiếp tệp tin lên Cloud.</p>
-                </div>
-                <button onclick="openAssignmentModal()" class="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-5 py-3 rounded-2xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-plus"></i> Tạo Bài Tập / Nộp Bài
-                </button>
-            </div>
-
-            <div class="glass-card p-4 rounded-2xl shadow-card flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div class="relative w-full md:w-96">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="text" id="assignment-search" oninput="renderAssignments()" placeholder="Tìm theo tên bài tập, môn học..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                </div>
-                <div class="flex gap-3 w-full md:w-auto">
-                    <select id="assignment-status-filter" onchange="renderAssignments()" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 justify-between">
+                    <input type="text" id="assignment-search" oninput="renderAssignments()" placeholder="Tìm tên bài tập, môn học..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 flex-grow">
+                    <select id="assignment-status-filter" onchange="renderAssignments()" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium">
                         <option value="ALL">Tất cả trạng thái</option>
                         <option value="Mới">Mới</option>
                         <option value="Đang làm">Đang làm</option>
                         <option value="Đã nộp/Đã hoàn thành">Đã nộp / Đã hoàn thành</option>
                     </select>
                 </div>
+
+                <div id="assignments-list" class="space-y-3">
+                    <!-- Dynamic Data -->
+                </div>
             </div>
 
-            <div id="assignments-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Dynamic Data -->
-            </div>
-        </section>
+            <!-- TAB 4: TÀI LIỆU -->
+            <div id="section-documents" class="space-y-4 hidden">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-folder-closed text-[#a33300]"></i> Chia Sẻ Tài Liệu Học Tập
+                    </h2>
 
-        <!-- SECTION 3: TÀI LIỆU -->
-        <section id="section-documents" class="space-y-6 hidden">
-            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-card space-y-6">
-                <div>
-                    <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-folder-closed text-blue-600"></i> Kho Tài Liệu Học Tập
-                    </h1>
-                    <p class="text-slate-500 text-sm mt-1">Lưu trữ và chia sẻ giáo trình, bài giảng, tài liệu tham khảo.</p>
+                    <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Tên tài liệu *</label>
+                                <input type="text" id="doc-title" required placeholder="VD: Slide C++ Chuyên Đề DP" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Môn học *</label>
+                                <input type="text" id="doc-category" required placeholder="VD: Tin Học Trẻ" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Người đăng *</label>
+                                <input type="text" id="doc-author" required placeholder="Tên của bạn..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Hình thức</label>
+                                <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg font-medium">
+                                    <option value="file">Tải tệp từ máy (PDF, Word, Zip...)</option>
+                                    <option value="link">Dán liên kết (Google Drive...)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="upload-file-container">
+                            <input type="file" id="doc-file-input" class="w-full text-slate-500 bg-white border border-slate-200 rounded-lg p-1">
+                        </div>
+
+                        <div id="upload-link-container" class="hidden">
+                            <input type="url" id="doc-link-input" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg">
+                        </div>
+
+                        <div class="flex justify-end pt-1">
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Kho
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Tên tài liệu <span class="text-red-500">*</span></label>
-                            <input type="text" id="doc-title" required placeholder="VD: Slide Bài Giảng Tuần 4" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Môn học <span class="text-red-500">*</span></label>
-                            <input type="text" id="doc-category" required placeholder="VD: Toán Tối Ưu Hóa" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Người đăng <span class="text-red-500">*</span></label>
-                            <input type="text" id="doc-author" required placeholder="Tên của bạn..." class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Hình thức đăng</label>
-                            <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
-                                <option value="file">Tải tệp từ máy (PDF, Word, Zip...)</option>
-                                <option value="link">Dán liên kết (Google Drive, Canva...)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="upload-file-container" class="space-y-2">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Chọn tệp tài liệu</label>
-                        <input type="file" id="doc-file-input" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer border border-slate-200 bg-white rounded-xl">
-                    </div>
-
-                    <div id="upload-link-container" class="space-y-2 hidden">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Link tài liệu</label>
-                        <input type="url" id="doc-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div class="flex justify-end pt-2">
-                        <button type="submit" id="btn-submit-doc" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Chia Sẻ Tài Liệu
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="glass-card rounded-3xl shadow-card overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-slate-100/80 text-slate-700 font-bold uppercase text-[11px] tracking-wider border-b border-slate-200">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                             <tr>
-                                <th class="px-6 py-4">Tên Tài Liệu</th>
-                                <th class="px-6 py-4">Môn Học</th>
-                                <th class="px-6 py-4">Người Đăng</th>
-                                <th class="px-6 py-4 text-right">Hành Động</th>
+                                <th class="px-4 py-3">Tên Tài Liệu</th>
+                                <th class="px-4 py-3">Môn Học</th>
+                                <th class="px-4 py-3">Tác Giả</th>
+                                <th class="px-4 py-3 text-right">Tải / Xóa</th>
                             </tr>
                         </thead>
                         <tbody id="documents-table-body" class="divide-y divide-slate-100">
@@ -316,120 +278,173 @@
                     </table>
                 </div>
             </div>
+
         </section>
+
+        <!-- RIGHT SIDEBAR (DMOJ Profile & Contest Widgets) -->
+        <aside class="lg:col-span-3 space-y-4">
+            
+            <!-- Widget 1: Clarifications -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 font-bold text-xs text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-amber-600"></i> Clarifications
+                </div>
+                <div class="p-4 text-xs italic text-slate-500">
+                    No clarifications have been made at this time.
+                </div>
+            </div>
+
+            <!-- Widget 2: Profile Stats -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 font-bold text-xs text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-user text-amber-600"></i> Profile / Thống Kê Nhóm
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="flex flex-col items-center text-center space-y-1.5">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=mlhthuongk24" class="w-16 h-16 rounded-full border border-slate-300 bg-slate-900">
+                        <span class="font-bold text-sm text-slate-800">NHÓM 2 Admin</span>
+                    </div>
+
+                    <div class="space-y-2 text-xs text-slate-600">
+                        <div class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-users text-slate-500"></i> Thành viên</span>
+                            <span class="font-bold text-slate-900" id="stat-members-count">0</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-slate-500"></i> Bài tập</span>
+                            <span class="font-bold text-slate-900" id="stat-assignments-count">0</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-folder-open text-slate-500"></i> Tài liệu</span>
+                            <span class="font-bold text-slate-900" id="stat-docs-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 3: Ongoing Contest Overlay Box -->
+            <div class="bg-[#2d3038] text-white rounded-xl p-4 shadow-sm space-y-2 border border-slate-700">
+                <div class="text-xs font-bold text-slate-300">
+                    Nhóm ITK24 (Cơ bản) - Contest 2
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="bg-emerald-500 text-black font-bold text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> In contest
+                    </span>
+                </div>
+                <div class="pt-2 text-xs border-t border-slate-600">
+                    <a href="#" class="text-blue-400 font-bold hover:underline">Contest Luyện Tập Tin Học</a>
+                    <div class="text-[11px] text-slate-400">Ends in 11:06:10.</div>
+                </div>
+            </div>
+
+        </aside>
 
     </main>
 
     <!-- MODAL: MEMBER -->
     <div id="modal-member" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 id="member-modal-title" class="font-bold text-lg text-slate-800">Thêm Thành Viên Mới</h3>
-                <button onclick="closeMemberModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+            <div class="px-5 py-3 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-sm text-slate-800">Thêm / Chỉnh Sửa Thành Viên</h3>
+                <button onclick="closeMemberModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="member-form" onsubmit="saveMember(event)" class="p-6 space-y-4">
+            <form id="member-form" onsubmit="saveMember(event)" class="p-5 space-y-3 text-xs">
                 <input type="hidden" id="member-id">
                 
-                <div class="flex items-center gap-4 p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-16 h-16 rounded-2xl border-2 border-blue-500/30 object-cover bg-white shadow-sm">
-                    <div class="space-y-1">
-                        <label class="block text-xs font-bold text-slate-700">Ảnh Đại Diện Avatar</label>
-                        <button type="button" onclick="generateRandomAvatar()" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-dice"></i> Đổi Ngẫu Nhiên
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-12 h-12 rounded-xl border object-cover bg-white">
+                    <div>
+                        <button type="button" onclick="generateRandomAvatar()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-2.5 py-1 rounded border transition-all">
+                            <i class="fa-solid fa-dice"></i> Đổi Avatar Ngẫu Nhiên
                         </button>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Link Avatar (Tùy chọn)</label>
-                    <input type="text" id="member-avatar" oninput="updateAvatarPreview(this.value)" placeholder="https://..." class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ và Tên <span class="text-red-500">*</span></label>
-                    <input type="text" id="member-name" required placeholder="VD: Nguyễn Văn A" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Link Avatar (Tùy chọn)</label>
+                    <input type="text" id="member-avatar" oninput="updateAvatarPreview(this.value)" placeholder="https://..." class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Vai Trò / Nhiệm Vụ</label>
-                    <input type="text" id="member-role" placeholder="VD: Nhóm Trưởng / Coder" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Họ và Tên *</label>
+                    <input type="text" id="member-name" required placeholder="VD: Nguyễn Văn A" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email Liên Hệ</label>
-                    <input type="email" id="member-email" placeholder="email@gmail.com" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Vai Trò / Nhiệm Vụ</label>
+                    <input type="text" id="member-role" placeholder="VD: Nhóm Trưởng / Coder" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                 </div>
-                <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" onclick="closeMemberModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50">Hủy</button>
-                    <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-md">Lưu</button>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Email Liên Hệ</label>
+                    <input type="email" id="member-email" placeholder="email@gmail.com" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeMemberModal()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg font-semibold">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-lg font-semibold">Lưu</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: ASSIGNMENT (ĐÃ BỔ SUNG TẢI FILE) -->
+    <!-- MODAL: ASSIGNMENT -->
     <div id="modal-assignment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 id="assignment-modal-title" class="font-bold text-lg text-slate-800">Tạo / Chỉnh Sửa Bài Tập</h3>
-                <button onclick="closeAssignmentModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200">
+            <div class="px-5 py-3 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-sm text-slate-800">Tạo / Chỉnh Sửa Bài Tập</h3>
+                <button onclick="closeAssignmentModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="assignment-form" onsubmit="saveAssignment(event)" class="p-6 space-y-4">
+            <form id="assignment-form" onsubmit="saveAssignment(event)" class="p-5 space-y-3 text-xs">
                 <input type="hidden" id="assignment-id">
                 <input type="hidden" id="assignment-file-data">
                 <input type="hidden" id="assignment-file-name">
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Bài Tập <span class="text-red-500">*</span></label>
-                    <input type="text" id="assignment-title" required placeholder="VD: Báo Cáo Thực Hành Cuối Kỳ" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Tên Bài Tập *</label>
+                    <input type="text" id="assignment-title" required placeholder="VD: Báo Cáo Thực Hành C++" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Môn Học <span class="text-red-500">*</span></label>
-                        <input type="text" id="assignment-subject" required placeholder="VD: Lập Trình" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <label class="block font-semibold text-slate-600 mb-1">Môn Học *</label>
+                        <input type="text" id="assignment-subject" required placeholder="VD: Lập Trình" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Hạn Nộp</label>
-                        <input type="date" id="assignment-deadline" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <label class="block font-semibold text-slate-600 mb-1">Hạn Nộp</label>
+                        <input type="date" id="assignment-deadline" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Trạng Thái</label>
-                    <select id="assignment-status" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                    <label class="block font-semibold text-slate-600 mb-1">Trạng Thái</label>
+                    <select id="assignment-status" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg font-medium">
                         <option value="Mới">Mới</option>
                         <option value="Đang làm">Đang làm</option>
                         <option value="Đã nộp/Đã hoàn thành">Đã nộp / Đã hoàn thành</option>
                     </select>
                 </div>
 
-                <!-- PHẦN HÌNH THỨC NỘP BÀI -->
-                <div class="border-t border-slate-100 pt-3 space-y-3">
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Nộp Bài Tập (Link hoặc File)</label>
-                    
+                <div class="border-t border-slate-200 pt-3 space-y-2">
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider">Nộp Bài Tập (Link hoặc File)</label>
                     <div>
-                        <label class="block text-xs text-slate-500 mb-1">Cách 1: Dán Link bài nộp (Google Drive/Github)</label>
-                        <input type="url" id="assignment-link" placeholder="https://..." class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <label class="block text-slate-500 mb-1">Cách 1: Link bài nộp (Drive/Github)</label>
+                        <input type="url" id="assignment-link" placeholder="https://..." class="w-full px-3 py-1.5 border border-slate-200 rounded-lg">
                     </div>
-
                     <div>
-                        <label class="block text-xs text-slate-500 mb-1">Cách 2: Tải tệp từ máy tính</label>
-                        <input type="file" id="assignment-file-input" onchange="handleAssignmentFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-slate-200 rounded-xl">
-                        <p id="assignment-file-status" class="text-[11px] text-emerald-600 font-medium mt-1 hidden"></p>
+                        <label class="block text-slate-500 mb-1">Cách 2: Tải tệp từ máy tính</label>
+                        <input type="file" id="assignment-file-input" onchange="handleAssignmentFileSelect(event)" class="w-full text-slate-500 border border-slate-200 rounded-lg p-1">
+                        <p id="assignment-file-status" class="text-emerald-600 font-medium mt-1 hidden"></p>
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeAssignmentModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50">Hủy</button>
-                    <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-md">Lưu Bài Tập</button>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeAssignmentModal()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg font-semibold">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-lg font-semibold">Lưu Bài Tập</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200/80 py-8 mt-16 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 space-y-2">
-            <p class="font-bold text-slate-700 text-sm">NHÓM 2 - HỆ THỐNG QUẢN LÝ VÀ CHIA SẺ HỌC TẬP</p>
-            <p>© 2026 Tự động đồng bộ thời gian thực qua Cloud Firestore Firebase</p>
-        </div>
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <p class="font-bold text-slate-700">NHÓM 2 - HỆ THỐNG QUẢN LÝ VÀ CHIA SẺ HỌC TẬP (NBK OJ STYLE)</p>
+        <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase</p>
     </footer>
 
     <!-- FIREBASE MODULE & REALTIME CLOUD LOGIC -->
@@ -482,7 +497,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                updateCloudStatus(true, "Đã kết nối Cloud NHÓM 2");
+                updateCloudStatus(true, "Cloud Online");
                 setupRealtimeListeners();
             } else {
                 updateCloudStatus(false, "Mất kết nối Cloud");
@@ -495,11 +510,11 @@
             const dot = document.getElementById('status-dot');
             const txt = document.getElementById('status-text');
             if (isOnline) {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
                 txt.innerText = text;
-                txt.className = "font-semibold text-emerald-700";
+                txt.className = "font-semibold text-emerald-400";
             } else {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping";
+                dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-ping";
                 txt.innerText = text;
             }
         }
@@ -621,10 +636,6 @@
             if (activeBtn) activeBtn.classList.add('active-tab');
         }
 
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        }
-
         window.updateStats = function() {
             document.getElementById('stat-members-count').innerText = (window.cloudData.members || []).length;
             document.getElementById('stat-assignments-count').innerText = (window.cloudData.assignments || []).length;
@@ -650,30 +661,30 @@
             const members = window.cloudData.members || [];
 
             if (members.length === 0) {
-                grid.innerHTML = `<div class="col-span-full glass-card p-12 rounded-3xl text-center font-medium text-slate-400">Chưa có thành viên nào trong NHÓM 2.</div>`;
+                grid.innerHTML = `<div class="col-span-full bg-white p-8 rounded-xl border text-center font-medium text-slate-400 text-xs">Chưa có thành viên nào trong NHÓM 2.</div>`;
                 return;
             }
 
             members.forEach(m => {
                 const avatarUrl = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-3xl p-6 shadow-card hover:shadow-glow transition-all flex flex-col justify-between relative group";
+                card.className = "bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between relative group";
                 card.innerHTML = `
-                    <div class="absolute top-5 right-5 flex gap-1.5 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="openMemberModal('${m.id}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-600 flex items-center justify-center text-xs transition-colors" title="Sửa"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteMember('${m.id}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 flex items-center justify-center text-xs transition-colors" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                    <div class="absolute top-3 right-3 flex gap-1">
+                        <button onclick="openMemberModal('${m.id}')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-600 flex items-center justify-center text-[10px]"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteMember('${m.id}')" class="w-6 h-6 rounded bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 flex items-center justify-center text-[10px]"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div>
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="${avatarUrl}" alt="${m.name}" class="w-16 h-16 rounded-2xl object-cover border-2 border-blue-500/20 shadow-sm bg-slate-100">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="${avatarUrl}" alt="${m.name}" class="w-12 h-12 rounded-xl object-cover border bg-slate-50">
                             <div>
-                                <h3 class="font-bold text-slate-900 text-base leading-snug">${m.name}</h3>
-                                <span class="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-lg mt-1 border border-blue-200/50">${m.role || 'Thành viên'}</span>
+                                <h3 class="font-bold text-slate-900 text-sm">${m.name}</h3>
+                                <span class="inline-block bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-100 mt-0.5">${m.role || 'Thành viên'}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="pt-4 border-t border-slate-100/80 flex items-center justify-between text-xs text-slate-500">
-                        <span class="flex items-center gap-1.5 font-medium"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
+                    <div class="pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                        <span class="flex items-center gap-1"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -759,7 +770,7 @@
             });
 
             if (filtered.length === 0) {
-                list.innerHTML = `<div class="col-span-full glass-card p-12 rounded-3xl text-center font-medium text-slate-400">Chưa có bài tập nào.</div>`;
+                list.innerHTML = `<div class="bg-white p-8 rounded-xl border text-center font-medium text-slate-400 text-xs">Chưa có bài tập nào.</div>`;
                 return;
             }
 
@@ -769,38 +780,36 @@
                 if (a.status === 'Đã nộp/Đã hoàn thành') statusBadge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
 
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-3xl p-6 shadow-card hover:shadow-glow transition-all flex flex-col justify-between";
+                card.className = "bg-white rounded-xl p-4 border border-slate-200 shadow-sm space-y-3 text-xs";
                 
                 let fileButton = '';
                 if (a.fileData) {
-                    fileButton = `<a href="${a.fileData}" download="${a.fileName || 'bai-tap'}" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 rounded-xl py-2.5 px-3 text-xs font-bold flex items-center justify-center gap-2 transition-colors"><i class="fa-solid fa-file-arrow-down"></i> Tải Bài Nộp (${a.fileName || 'Tệp đính kèm'})</a>`;
+                    fileButton = `<a href="${a.fileData}" download="${a.fileName || 'bai-tap'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded px-3 py-1.5 font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-arrow-down"></i> Tải Tệp Bài Nộp (${a.fileName || 'Tệp đính kèm'})</a>`;
                 }
 
                 let linkButton = '';
                 if (a.link) {
-                    linkButton = `<a href="${a.link}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/80 rounded-xl py-2.5 px-3 text-xs font-bold flex items-center justify-center gap-2 transition-colors"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link Bài Nộp</a>`;
+                    linkButton = `<a href="${a.link}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded px-3 py-1.5 font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link Bài Nộp</a>`;
                 }
 
                 card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-3">
-                            <span class="text-xs font-bold text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3 py-1 rounded-lg">${a.subject || 'Môn học'}</span>
-                            <span class="text-xs px-3 py-1 rounded-lg font-bold border ${statusBadge}">${a.status}</span>
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-blue-600 uppercase bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">${a.subject || 'Môn học'}</span>
+                            <h3 class="font-bold text-slate-900 text-sm mt-1">${a.title}</h3>
                         </div>
-                        <h3 class="font-bold text-slate-900 text-lg mb-2 leading-snug">${a.title}</h3>
+                        <span class="text-[10px] px-2 py-0.5 rounded font-bold border ${statusBadge}">${a.status}</span>
                     </div>
-                    <div class="space-y-3 pt-4 border-t border-slate-100/80 mt-4">
-                        <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
-                            <span>Hạn nộp: <strong class="text-slate-800">${a.deadline || 'Chưa xếp'}</strong></span>
-                            <div class="flex gap-2">
-                                <button onclick="openAssignmentModal('${a.id}')" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteAssignment('${a.id}')" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-600 flex items-center justify-center text-xs"><i class="fa-solid fa-trash"></i></button>
-                            </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+                        <span>Hạn nộp: <strong class="text-slate-800">${a.deadline || 'Chưa xếp'}</strong></span>
+                        <div class="flex gap-1">
+                            <button onclick="openAssignmentModal('${a.id}')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteAssignment('${a.id}')" class="w-6 h-6 rounded bg-slate-100 hover:bg-red-100 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
-                        <div class="space-y-2">
-                            ${fileButton}
-                            ${linkButton}
-                        </div>
+                    </div>
+                    <div class="space-y-1.5 pt-1">
+                        ${fileButton}
+                        ${linkButton}
                     </div>
                 `;
                 list.appendChild(card);
@@ -903,20 +912,20 @@
             const documents = window.cloudData.documents || [];
 
             if (documents.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium">Chưa có tài liệu nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400 font-medium text-xs">Chưa có tài liệu nào.</td></tr>`;
                 return;
             }
 
             documents.forEach(d => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
-                    <td class="px-6 py-4 font-bold text-slate-800">${d.title}</td>
-                    <td class="px-6 py-4"><span class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-lg font-bold border border-blue-100">${d.category}</span></td>
-                    <td class="px-6 py-4 text-xs font-semibold text-slate-600">${d.author}</td>
-                    <td class="px-6 py-4 text-right">
-                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors"><i class="fa-solid fa-download text-base"></i></a>
-                        <button onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors"><i class="fa-solid fa-trash text-base"></i></button>
+                    <td class="px-4 py-3 font-bold text-slate-800">${d.title}</td>
+                    <td class="px-4 py-3"><span class="bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold border border-blue-100">${d.category}</span></td>
+                    <td class="px-4 py-3 font-semibold text-slate-600">${d.author}</td>
+                    <td class="px-4 py-3 text-right">
+                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors"><i class="fa-solid fa-download"></i></a>
+                        <button onclick="deleteDoc('${d.id}')" class="p-1.5 text-slate-400 hover:text-red-600 transition-colors"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
