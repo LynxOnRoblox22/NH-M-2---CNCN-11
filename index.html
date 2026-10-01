@@ -248,7 +248,7 @@
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức</label>
                                 <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
-                                    <option value="file">Tải tệp lớn qua Supabase (Miễn phí)</option>
+                                    <option value="file">Tải tệp lên / upload files</option>
                                     <option value="link">Dán liên kết (Google Drive...)</option>
                                 </select>
                             </div>
@@ -573,9 +573,19 @@
         window.deleteDocumentFromCloud = async function(id) {
             if (!currentUser || !id) return;
             try {
+                // Lấy thông tin tài liệu cần xóa
+                const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
+                
+                // Nếu tài liệu có lưu tệp trên Supabase, thực hiện xóa tệp khỏi Supabase Storage
+                if (docToDelete && docToDelete.filePath) {
+                    await window.deleteFileFromSupabase(docToDelete.filePath);
+                }
+
+                // Xóa tài liệu khỏi Firestore Database
                 await deleteDoc(doc(db, 'documents', id));
-                window.showToast("Đã xóa tài liệu khỏi hệ thống!", "info");
+                window.showToast("Đã xóa tài liệu khỏi hệ thống và Supabase!", "info");
             } catch (err) {
+                console.error("Lỗi khi xóa tài liệu:", err);
                 window.showToast("Lỗi khi xóa tài liệu!", "error");
             }
         };
@@ -583,7 +593,7 @@
 
     <!-- UI HANDLERS & SUPABASE UPLOADER -->
     <script>
-        // CẤU HÌNH SUPABASE STORAGE (Thay thế các thông số bên dưới bằng dự án Supabase của bạn)
+        // CẤU HÌNH SUPABASE STORAGE
         const SUPABASE_URL = "https://ljzydgwvhoupgwgurtxn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_C5cBGFFn9kpCGxxKRi6uTw_lHFNJZnY";
         const BUCKET_NAME = "files"; // Tên Bucket công khai (Public Bucket) trên Supabase
@@ -593,7 +603,7 @@
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // HÀM UPLOAD FILE DÙNG SUPABASE STORAGE SDK (HỖ TRỢ FILE LỚN TỚI HÀNG GB)
+        // HÀM UPLOAD FILE DÙNG SUPABASE STORAGE SDK
         async function uploadFileFree(file) {
             if (!supabaseClient) {
                 throw new Error("Chưa cấu hình Supabase URL & Key! Vui lòng cập nhật biến SUPABASE_URL và SUPABASE_ANON_KEY trong mã.");
@@ -622,8 +632,27 @@
                 .from(BUCKET_NAME)
                 .getPublicUrl(filePath);
 
-            return publicUrlData.publicUrl;
+            return {
+                publicUrl: publicUrlData.publicUrl,
+                filePath: filePath
+            };
         }
+
+        // HÀM XÓA FILE TRÊN SUPABASE STORAGE
+        window.deleteFileFromSupabase = async function(filePath) {
+            if (!supabaseClient || !filePath) return;
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from(BUCKET_NAME)
+                .remove([filePath]);
+
+            if (error) {
+                console.error("Supabase Delete File Error:", error);
+            } else {
+                console.log("Đã xóa tệp trên Supabase Storage thành công:", filePath);
+            }
+        };
 
         // DARK MODE TOGGLE
         function toggleDarkMode() {
@@ -861,8 +890,7 @@
             const link = document.getElementById('assignment-link').value.trim();
             const fileInput = document.getElementById('assignment-file-input');
 
-            let fileUrl = null;
-            let fileName = null;
+            let fileResult = null;
 
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
@@ -871,8 +899,7 @@
                 window.showToast("Đang tải tệp bài tập lên Supabase...", "info");
 
                 try {
-                    fileUrl = await uploadFileFree(file);
-                    fileName = file.name;
+                    fileResult = await uploadFileFree(file);
                 } catch (err) {
                     window.showToast(err.message || "Lỗi khi tải tệp bài tập lên!", "error");
                     submitBtn.disabled = false;
@@ -882,9 +909,10 @@
             }
 
             const asgObj = { id: id || null, title, subject, deadline, status, link };
-            if (fileUrl) {
-                asgObj.fileUrl = fileUrl;
-                asgObj.fileName = fileName;
+            if (fileResult) {
+                asgObj.fileUrl = fileResult.publicUrl;
+                asgObj.filePath = fileResult.filePath;
+                asgObj.fileName = fileInput.files[0].name;
             }
 
             window.saveAssignmentToCloud(asgObj);
@@ -930,8 +958,15 @@
                 window.showToast("Đang tải tệp tài liệu lên Supabase...", "info");
 
                 try {
-                    const downloadUrl = await uploadFileFree(file);
-                    await window.saveDocumentToCloud({ title, category, author, url: downloadUrl, type: 'file' });
+                    const uploadResult = await uploadFileFree(file);
+                    await window.saveDocumentToCloud({ 
+                        title, 
+                        category, 
+                        author, 
+                        url: uploadResult.publicUrl, 
+                        filePath: uploadResult.filePath, 
+                        type: 'file' 
+                    });
                     document.getElementById('doc-upload-form').reset();
                 } catch (error) {
                     console.error("Lỗi upload:", error);
@@ -977,7 +1012,7 @@
         };
 
         function deleteDoc(id) {
-            if (confirm("Xóa tài liệu này khỏi kho?")) {
+            if (confirm("Xóa tài liệu này khỏi kho và Supabase Storage?")) {
                 window.deleteDocumentFromCloud(id);
             }
         }
