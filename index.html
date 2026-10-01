@@ -43,7 +43,7 @@
                               url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
         }
 
-        /* Nền chế độ Tối: Làm tối tone màu đen/xanh đậm nhưng làm lớp phủ mỏng hơn (0.75) để lộ rõ chi tiết ảnh phía sau */
+        /* Nền chế độ Tối */
         html.dark body {
             background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
                               url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
@@ -112,7 +112,6 @@
                     <span id="status-text" class="font-semibold text-slate-300">Đang kết nối...</span>
                 </div>
                 
-                <!-- Nút chuyển đổi giao diện Sáng / Tối -->
                 <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl hover:bg-slate-700 text-amber-300 hover:text-amber-200 transition-all text-base flex items-center justify-center" title="Đổi chế độ Sáng/Tối">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                 </button>
@@ -148,7 +147,7 @@
         <!-- CENTER CONTENT -->
         <section class="lg:col-span-9 space-y-6">
 
-            <!-- TAB 1: GIỚI THIỆU / TỔNG QUAN -->
+            <!-- TAB 1: GIỚI THIỆU -->
             <div id="section-intro" class="space-y-6">
                 <article class="relative bg-slate-900/85 backdrop-blur-md text-white rounded-2xl border border-slate-700 p-8 shadow-xl space-y-6 overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.60)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80');">
                     <div class="flex justify-between items-center text-sm text-slate-300">
@@ -165,7 +164,7 @@
                         Chào mừng đến với Hệ Thống Quản Lý NHÓM 2 - CNCN
                     </h1>
                     <p class="text-base text-slate-200 leading-relaxed max-w-2xl">
-                        Nơi làm việc tập trung: Phân công công việc, tải tệp bài tập, lưu trữ tài liệu học tập và theo dõi tiến độ công việc theo thời gian thực.
+                        Nơi làm việc tập trung: Phân công công việc, tải tệp bài tập dung lượng lớn miễn phí, lưu trữ tài liệu học tập và theo dõi tiến độ công việc theo thời gian thực.
                     </p>
 
                     <div class="flex items-center gap-4 pt-4 border-t border-slate-700/80">
@@ -247,7 +246,7 @@
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức</label>
                                 <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
-                                    <option value="file">Tải tệp từ máy (PDF, Word, Zip...)</option>
+                                    <option value="file">Tải tệp từ máy (Hỗ trợ >1MB miễn phí)</option>
                                     <option value="link">Dán liên kết (Google Drive...)</option>
                                 </select>
                             </div>
@@ -262,7 +261,7 @@
                         </div>
 
                         <div class="flex justify-end pt-2">
-                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                            <button type="submit" id="doc-submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
                                 <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Kho
                             </button>
                         </div>
@@ -348,8 +347,6 @@
             </div>
             <form id="assignment-form" onsubmit="saveAssignment(event)" class="p-6 space-y-4 text-sm">
                 <input type="hidden" id="assignment-id">
-                <input type="hidden" id="assignment-file-data">
-                <input type="hidden" id="assignment-file-name">
 
                 <div>
                     <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Tên Bài Tập *</label>
@@ -375,21 +372,20 @@
                 </div>
 
                 <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-3">
-                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Nộp Bài Tập (Link hoặc File)</label>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Nộp Bài Tập (Link hoặc Tệp)</label>
                     <div>
                         <label class="block text-slate-500 dark:text-slate-400 mb-1">Cách 1: Link bài nộp (Drive/Github)</label>
                         <input type="url" id="assignment-link" placeholder="https://..." class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
                     </div>
                     <div>
-                        <label class="block text-slate-500 dark:text-slate-400 mb-1">Cách 2: Tải tệp từ máy tính</label>
-                        <input type="file" id="assignment-file-input" onchange="handleAssignmentFileSelect(event)" class="w-full text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 bg-white dark:bg-slate-900">
-                        <p id="assignment-file-status" class="text-emerald-600 dark:text-emerald-400 font-medium mt-1 hidden"></p>
+                        <label class="block text-slate-500 dark:text-slate-400 mb-1">Cách 2: Tải tệp từ máy tính (Miễn phí tới 200MB)</label>
+                        <input type="file" id="assignment-file-input" class="w-full text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 bg-white dark:bg-slate-900">
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-700">
                     <button type="button" onclick="closeAssignmentModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold">Hủy</button>
-                    <button type="submit" class="px-5 py-2.5 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-xl font-semibold">Lưu Bài Tập</button>
+                    <button type="submit" id="assignment-submit-btn" class="px-5 py-2.5 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-xl font-semibold">Lưu Bài Tập</button>
                 </div>
             </form>
         </div>
@@ -509,7 +505,6 @@
                 }
                 window.showToast("Đã lưu thông tin thành viên!", "success");
             } catch (err) {
-                console.error(err);
                 window.showToast("Lỗi khi lưu thành viên!", "error");
             }
         };
@@ -525,7 +520,6 @@
                 }
                 window.showToast("Đã lưu thông tin bài tập!", "success");
             } catch (err) {
-                console.error(err);
                 window.showToast("Lỗi khi lưu bài tập!", "error");
             }
         };
@@ -562,8 +556,27 @@
         };
     </script>
 
-    <!-- UI HANDLERS -->
+    <!-- UI HANDLERS & FREE UPLOADER -->
     <script>
+        // HÀM UPLOAD FILE MIỄN PHÍ DÙNG CATBOX API (Tối đa 200MB/tệp)
+        async function uploadFileFree(file) {
+            const formData = new FormData();
+            formData.append("reqtype", "fileupload");
+            formData.append("fileToUpload", file);
+
+            const response = await fetch("https://catbox.moe/user/api.php", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const fileUrl = await response.text();
+                return fileUrl.trim();
+            } else {
+                throw new Error("Lỗi khi tải tệp lên máy chủ lưu trữ!");
+            }
+        }
+
         // DARK MODE TOGGLE
         function toggleDarkMode() {
             const html = document.documentElement;
@@ -581,7 +594,6 @@
             }
         }
 
-        // Khôi phục Chế độ Sáng/Tối đã lưu
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.remove('light');
             document.documentElement.classList.add('dark');
@@ -591,7 +603,7 @@
             });
         }
 
-        // SWITCH TAB VÀ ĐỔI MÀU SIDEBAR
+        // SWITCH TAB
         function switchTab(tabName) {
             document.getElementById('section-intro').classList.add('hidden');
             document.getElementById('section-members').classList.add('hidden');
@@ -702,26 +714,6 @@
             closeMemberModal();
         }
 
-        // XỬ LÝ FILE KHI NỘP BÀI TẬP
-        function handleAssignmentFileSelect(e) {
-            const file = e.target.files[0];
-            const statusElem = document.getElementById('assignment-file-status');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    document.getElementById('assignment-file-data').value = evt.target.result;
-                    document.getElementById('assignment-file-name').value = file.name;
-                    statusElem.innerText = `✓ Đã chọn tệp: ${file.name}`;
-                    statusElem.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                document.getElementById('assignment-file-data').value = '';
-                document.getElementById('assignment-file-name').value = '';
-                statusElem.classList.add('hidden');
-            }
-        }
-
         // RENDER ASSIGNMENTS
         window.renderAssignments = function() {
             const list = document.getElementById('assignments-list');
@@ -751,8 +743,8 @@
                 card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4 text-sm group hover:shadow-md transition-all";
                 
                 let fileButton = '';
-                if (a.fileData) {
-                    fileButton = `<a href="${a.fileData}" download="${a.fileName || 'bai-tap'}" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 rounded-xl px-4 py-2 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-file-arrow-down text-base"></i> Tải Tệp Bài Nộp (${a.fileName || 'Tệp đính kèm'})</a>`;
+                if (a.fileUrl) {
+                    fileButton = `<a href="${a.fileUrl}" target="_blank" download="${a.fileName || 'bai-tap'}" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 rounded-xl px-4 py-2 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-file-arrow-down text-base"></i> Tải Tệp Bài Nộp (${a.fileName || 'Tệp đính kèm'})</a>`;
                 }
 
                 let linkButton = '';
@@ -789,9 +781,6 @@
             const modal = document.getElementById('modal-assignment');
             document.getElementById('assignment-form').reset();
             document.getElementById('assignment-id').value = '';
-            document.getElementById('assignment-file-data').value = '';
-            document.getElementById('assignment-file-name').value = '';
-            document.getElementById('assignment-file-status').classList.add('hidden');
 
             if (id) {
                 const a = window.cloudData.assignments.find(item => item.id === id);
@@ -802,13 +791,6 @@
                     document.getElementById('assignment-deadline').value = a.deadline || '';
                     document.getElementById('assignment-status').value = a.status;
                     document.getElementById('assignment-link').value = a.link || '';
-                    if (a.fileName) {
-                        document.getElementById('assignment-file-data').value = a.fileData || '';
-                        document.getElementById('assignment-file-name').value = a.fileName || '';
-                        const statusElem = document.getElementById('assignment-file-status');
-                        statusElem.innerText = `✓ Đã có file: ${a.fileName}`;
-                        statusElem.classList.remove('hidden');
-                    }
                 }
             }
             modal.classList.remove('hidden');
@@ -818,18 +800,46 @@
             document.getElementById('modal-assignment').classList.add('hidden');
         }
 
-        function saveAssignment(e) {
+        async function saveAssignment(e) {
             e.preventDefault();
+            const submitBtn = document.getElementById('assignment-submit-btn');
             const id = document.getElementById('assignment-id').value;
             const title = document.getElementById('assignment-title').value.trim();
             const subject = document.getElementById('assignment-subject').value.trim();
             const deadline = document.getElementById('assignment-deadline').value;
             const status = document.getElementById('assignment-status').value;
             const link = document.getElementById('assignment-link').value.trim();
-            const fileData = document.getElementById('assignment-file-data').value;
-            const fileName = document.getElementById('assignment-file-name').value;
+            const fileInput = document.getElementById('assignment-file-input');
 
-            window.saveAssignmentToCloud({ id: id || null, title, subject, deadline, status, link, fileData, fileName });
+            let fileUrl = null;
+            let fileName = null;
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải tệp...`;
+                window.showToast("Đang tải tệp bài tập lên...", "info");
+
+                try {
+                    fileUrl = await uploadFileFree(file);
+                    fileName = file.name;
+                } catch (err) {
+                    window.showToast("Lỗi khi tải tệp bài tập lên!", "error");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Lưu Bài Tập";
+                    return;
+                }
+            }
+
+            const asgObj = { id: id || null, title, subject, deadline, status, link };
+            if (fileUrl) {
+                asgObj.fileUrl = fileUrl;
+                asgObj.fileName = fileName;
+            }
+
+            window.saveAssignmentToCloud(asgObj);
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Lưu Bài Tập";
             closeAssignmentModal();
         }
 
@@ -853,6 +863,7 @@
 
         async function handleDocSubmit(e) {
             e.preventDefault();
+            const submitBtn = document.getElementById('doc-submit-btn');
             const title = document.getElementById('doc-title').value.trim();
             const category = document.getElementById('doc-category').value.trim();
             const author = document.getElementById('doc-author').value.trim();
@@ -860,16 +871,29 @@
 
             if (uploadType === 'file') {
                 const fileInput = document.getElementById('doc-file-input');
-                if (!fileInput.files.length) return alert("Vui lòng chọn tệp!");
+                if (!fileInput.files.length) return window.showToast("Vui lòng chọn tệp!", "error");
+                
                 const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = async function(evt) {
-                    await window.saveDocumentToCloud({ title, category, author, url: evt.target.result, type: 'file' });
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải lên...`;
+                window.showToast("Đang tải tệp tài liệu lên máy chủ...", "info");
+
+                try {
+                    const downloadUrl = await uploadFileFree(file);
+                    await window.saveDocumentToCloud({ title, category, author, url: downloadUrl, type: 'file' });
                     document.getElementById('doc-upload-form').reset();
-                };
-                reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error("Lỗi upload:", error);
+                    window.showToast("Lỗi khi tải tệp lên máy chủ!", "error");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Kho`;
+                }
             } else {
                 const link = document.getElementById('doc-link-input').value.trim();
+                if (!link) return window.showToast("Vui lòng nhập liên kết!", "error");
+                
                 await window.saveDocumentToCloud({ title, category, author, url: link, type: 'link' });
                 document.getElementById('doc-upload-form').reset();
             }
@@ -893,8 +917,8 @@
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base"><i class="fa-solid fa-download"></i></a>
-                        <button onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base"><i class="fa-solid fa-trash"></i></button>
+                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base" title="Tải về"><i class="fa-solid fa-download"></i></a>
+                        <button onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -909,7 +933,18 @@
 
         window.showToast = function(message, type = "success") {
             const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            
             document.getElementById('toast-msg').innerText = message;
+
+            if (type === "error") {
+                toastIcon.className = "fa-solid fa-circle-xmark text-rose-500 text-xl";
+            } else if (type === "info") {
+                toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-xl";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl";
+            }
+
             toast.classList.remove('translate-y-24', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-24', 'opacity-0');
