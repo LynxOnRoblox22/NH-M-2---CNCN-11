@@ -39,13 +39,11 @@
             transition: background-image 0.3s ease, background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Nền chế độ Sáng */
         html.light body, body {
             background-image: linear-gradient(to bottom, rgba(242, 243, 245, 0.92), rgba(242, 243, 245, 0.95)), 
                               url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
         }
 
-        /* Nền chế độ Tối */
         html.dark body {
             background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
                               url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80');
@@ -86,7 +84,6 @@
     <!-- HEADER / NAVIGATION BAR -->
     <header class="bg-[#3b3d45] text-white border-b border-slate-700 shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
-            <!-- Logo & Nav Links -->
             <div class="flex items-center space-x-10">
                 <div class="flex items-center gap-2 font-black text-2xl tracking-tighter text-white cursor-pointer" onclick="switchTab('intro')">
                     <span class="text-blue-500">NHÓM 2</span> <span class="text-red-500">- CNCN</span>
@@ -107,7 +104,6 @@
                 </nav>
             </div>
 
-            <!-- Header Right Status & Dark Mode Toggle -->
             <div class="flex items-center space-x-5 text-sm text-slate-300">
                 <div id="cloud-status" class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-800 text-xs border border-slate-700">
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
@@ -195,7 +191,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: BÀI TẬP NHÓM (Y HỆT HỆ THỐNG KHO TÀI LIỆU) -->
+            <!-- TAB 3: BÀI TẬP NHÓM -->
             <div id="section-assignments" class="space-y-6 hidden">
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
@@ -261,7 +257,7 @@
                 </div>
             </div>
 
-            <!-- TAB 4: KHO TÀI LIỆU GỐC -->
+            <!-- TAB 4: KHO TÀI LIỆU -->
             <div id="section-documents" class="space-y-6 hidden">
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
@@ -498,7 +494,6 @@
             });
         }
 
-        // --- MEMBER CLOUD ACTIONS ---
         window.saveMemberToCloud = async function(memberObj) {
             if (!currentUser) return;
             try {
@@ -513,7 +508,6 @@
             }
         };
 
-        // --- UNIFIED CLOUD ACTIONS FOR BOTH SECTIONS ---
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
@@ -534,12 +528,10 @@
             try {
                 const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
                 
-                // Xóa file trên Supabase Storage nếu có
                 if (docToDelete && docToDelete.filePath) {
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
 
-                // Xóa khỏi Firebase
                 await deleteDoc(doc(db, 'documents', id));
                 window.showToast("Đã xóa khỏi hệ thống!", "info");
             } catch (err) {
@@ -551,7 +543,6 @@
 
     <!-- UI HANDLERS & SUPABASE UPLOADER -->
     <script>
-        // CẤU HÌNH SUPABASE STORAGE
         const SUPABASE_URL = "https://ljzydgwvhoupgwgurtxn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_C5cBGFFn9kpCGxxKRi6uTw_lHFNJZnY";
         const BUCKET_NAME = "files"; 
@@ -607,7 +598,6 @@
             }
         };
 
-        // DARK MODE TOGGLE
         function toggleDarkMode() {
             const html = document.documentElement;
             const themeIcon = document.getElementById('theme-icon');
@@ -633,7 +623,6 @@
             });
         }
 
-        // SWITCH TAB
         function switchTab(tabName) {
             document.getElementById('section-intro').classList.add('hidden');
             document.getElementById('section-members').classList.add('hidden');
@@ -652,7 +641,6 @@
             if (activeSideBtn) activeSideBtn.classList.add('active-sidebar');
         }
 
-        // AVATAR GENERATOR
         function generateRandomAvatar() {
             const seed = Math.random().toString(36).substring(7);
             const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
@@ -664,7 +652,6 @@
             document.getElementById('member-avatar-preview').src = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
         }
 
-        // RENDER MEMBERS
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -745,7 +732,6 @@
             closeMemberModal();
         }
 
-        // --- BÀI TẬP NHÓM (HỆ THỐNG XỬ LÝ COPY HOÀN TOÀN TỪ KHO TÀI LIỆU) ---
         function toggleAsgUploadType() {
             const type = document.getElementById('asg-upload-type').value;
             if (type === 'file') {
@@ -803,13 +789,15 @@
             }
         }
 
+        // Cập nhật hàm lọc để không bỏ sót Bài 4 hoặc các bài tập cũ không có itemType
         window.renderAssignments = function() {
             const tbody = document.getElementById('assignments-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
             
             const allDocs = window.cloudData.documents || [];
-            const assignments = allDocs.filter(item => item.itemType === 'assignment');
+            // Hiển thị cả những bài có itemType === 'assignment' VÀ những bài không có itemType
+            const assignments = allDocs.filter(item => item.itemType === 'assignment' || !item.itemType);
 
             if (assignments.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có bài tập nào được nộp.</td></tr>`;
@@ -820,19 +808,18 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
                 tr.innerHTML = `
-                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100 text-base">${a.title}</td>
+                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100 text-base">${a.title || 'Chưa đặt tên'}</td>
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${a.category || 'Môn học'}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${a.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>
-                        <button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                        ${a.url ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>` : ''}
+                        <button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa bài tập này"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         };
 
-        // --- KHO TÀI LIỆU GỐC ---
         function toggleUploadType() {
             const type = document.getElementById('doc-upload-type').value;
             if (type === 'file') {
@@ -896,7 +883,7 @@
             tbody.innerHTML = '';
             
             const allDocs = window.cloudData.documents || [];
-            const documents = allDocs.filter(item => item.itemType === 'document' || (!item.itemType && !item.status));
+            const documents = allDocs.filter(item => item.itemType === 'document');
 
             if (documents.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có tài liệu nào.</td></tr>`;
@@ -911,7 +898,7 @@
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category || 'Tài liệu'}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
+                        ${d.url ? `<a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>` : ''}
                         <button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
