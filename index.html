@@ -552,9 +552,19 @@
         window.deleteAssignmentFromCloud = async function(id) {
             if (!currentUser || !id) return;
             try {
+                // Tìm bài tập cần xóa trong mảng dữ liệu hiện tại
+                const assignmentToDelete = (window.cloudData.assignments || []).find(a => a.id === id);
+                
+                // Nếu bài tập có lưu tệp trên Supabase Storage, tiến hành xóa tệp đó trước
+                if (assignmentToDelete && assignmentToDelete.filePath) {
+                    await window.deleteFileFromSupabase(assignmentToDelete.filePath);
+                }
+
+                // Xóa bài tập khỏi Firestore Database
                 await deleteDoc(doc(db, 'assignments', id));
-                window.showToast("Đã xóa bài tập!", "info");
+                window.showToast("Đã xóa bài tập và tệp đính kèm!", "info");
             } catch (err) {
+                console.error("Lỗi khi xóa bài tập:", err);
                 window.showToast("Lỗi khi xóa bài tập!", "error");
             }
         };
@@ -573,15 +583,12 @@
         window.deleteDocumentFromCloud = async function(id) {
             if (!currentUser || !id) return;
             try {
-                // Lấy thông tin tài liệu cần xóa
                 const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
                 
-                // Nếu tài liệu có lưu tệp trên Supabase, thực hiện xóa tệp khỏi Supabase Storage
                 if (docToDelete && docToDelete.filePath) {
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
 
-                // Xóa tài liệu khỏi Firestore Database
                 await deleteDoc(doc(db, 'documents', id));
                 window.showToast("Đã xóa tài liệu khỏi hệ thống và Supabase!", "info");
             } catch (err) {
@@ -596,23 +603,20 @@
         // CẤU HÌNH SUPABASE STORAGE
         const SUPABASE_URL = "https://ljzydgwvhoupgwgurtxn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_C5cBGFFn9kpCGxxKRi6uTw_lHFNJZnY";
-        const BUCKET_NAME = "files"; // Tên Bucket công khai (Public Bucket) trên Supabase
+        const BUCKET_NAME = "files"; 
 
         let supabaseClient = null;
         if (typeof supabase !== "undefined" && SUPABASE_URL !== "https://your-project-id.supabase.co") {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // HÀM UPLOAD FILE DÙNG SUPABASE STORAGE SDK
         async function uploadFileFree(file) {
             if (!supabaseClient) {
-                throw new Error("Chưa cấu hình Supabase URL & Key! Vui lòng cập nhật biến SUPABASE_URL và SUPABASE_ANON_KEY trong mã.");
+                throw new Error("Chưa cấu hình Supabase URL & Key!");
             }
 
-            // Tạo tên file duy nhất tránh trùng lặp: timestamp_tenfile
             const filePath = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
 
-            // Tải tệp lên Supabase Storage Bucket
             const { data, error } = await supabaseClient
                 .storage
                 .from(BUCKET_NAME)
@@ -626,7 +630,6 @@
                 throw new Error(error.message || "Lỗi khi tải tệp lên Supabase Storage!");
             }
 
-            // Lấy URL công khai (Public URL) để chia sẻ/tải tệp
             const { data: publicUrlData } = supabaseClient
                 .storage
                 .from(BUCKET_NAME)
@@ -638,7 +641,6 @@
             };
         }
 
-        // HÀM XÓA FILE TRÊN SUPABASE STORAGE
         window.deleteFileFromSupabase = async function(filePath) {
             if (!supabaseClient || !filePath) return;
 
@@ -890,6 +892,12 @@
             const link = document.getElementById('assignment-link').value.trim();
             const fileInput = document.getElementById('assignment-file-input');
 
+            // Lấy thông tin bài tập cũ nếu đang ở chế độ chỉnh sửa
+            let existingAssignment = null;
+            if (id) {
+                existingAssignment = (window.cloudData.assignments || []).find(item => item.id === id);
+            }
+
             let fileResult = null;
 
             if (fileInput.files.length > 0) {
@@ -899,6 +907,9 @@
                 window.showToast("Đang tải tệp bài tập lên Supabase...", "info");
 
                 try {
+                    if (existingAssignment && existingAssignment.filePath) {
+                        await window.deleteFileFromSupabase(existingAssignment.filePath);
+                    }
                     fileResult = await uploadFileFree(file);
                 } catch (err) {
                     window.showToast(err.message || "Lỗi khi tải tệp bài tập lên!", "error");
@@ -908,12 +919,17 @@
                 }
             }
 
-            const asgObj = { id: id || null, title, subject, deadline, status, link };
-            if (fileResult) {
-                asgObj.fileUrl = fileResult.publicUrl;
-                asgObj.filePath = fileResult.filePath;
-                asgObj.fileName = fileInput.files[0].name;
-            }
+            const asgObj = { 
+                id: id || null, 
+                title, 
+                subject, 
+                deadline, 
+                status, 
+                link,
+                fileUrl: fileResult ? fileResult.publicUrl : (existingAssignment ? existingAssignment.fileUrl || '' : ''),
+                filePath: fileResult ? fileResult.filePath : (existingAssignment ? existingAssignment.filePath || '' : ''),
+                fileName: fileResult ? fileInput.files[0].name : (existingAssignment ? existingAssignment.fileName || '' : '')
+            };
 
             window.saveAssignmentToCloud(asgObj);
             submitBtn.disabled = false;
