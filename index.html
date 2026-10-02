@@ -99,7 +99,7 @@
                         <i class="fa-solid fa-users text-base"></i> Thành Viên
                     </button>
                     <button type="button" onclick="switchTab('assignments')" id="tab-btn-assignments" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-base"></i> Bài Tập
+                        <i class="fa-solid fa-list-check text-base"></i> Bài Tập Nhóm
                     </button>
                     <button type="button" onclick="switchTab('documents')" id="tab-btn-documents" class="nav-tab py-5 hover:text-white transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-folder-closed text-base"></i> Kho Tài Liệu
@@ -195,33 +195,73 @@
                 </div>
             </div>
 
-            <!-- TAB 3: BÀI TẬP -->
+            <!-- TAB 3: BÀI TẬP NHÓM (Y HỆT HỆ THỐNG KHO TÀI LIỆU) -->
             <div id="section-assignments" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
-                        <i class="fa-solid fa-list-check text-[#a33300]"></i> Bài Tập & Phân Công
+                        <i class="fa-solid fa-list-check text-[#a33300]"></i> Quản Lý & Nộp Bài Tập Nhóm
                     </h2>
-                    <button type="button" onclick="openAssignmentModal()" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-circle-plus"></i> Tạo Bài Tập / Nộp Bài
-                    </button>
+
+                    <form id="asg-upload-form" onsubmit="handleAsgSubmit(event)" class="bg-slate-50 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên bài tập *</label>
+                                <input type="text" id="asg-title" required placeholder="VD: Bài tập Thực Hành Chuyên Đề" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Môn học *</label>
+                                <input type="text" id="asg-category" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Người thực hiện / nộp *</label>
+                                <input type="text" id="asg-author" required placeholder="Tên thành viên..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức nộp</label>
+                                <select id="asg-upload-type" onchange="toggleAsgUploadType()" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
+                                    <option value="file">Tải tệp lên / upload files</option>
+                                    <option value="link">Dán liên kết bài nộp (Google Drive, Github...)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="asg-upload-file-container">
+                            <input type="file" id="asg-file-input" class="w-full text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2">
+                        </div>
+
+                        <div id="asg-upload-link-container" class="hidden">
+                            <input type="url" id="asg-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                        </div>
+
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" id="asg-submit-btn" class="bg-[#a33300] hover:bg-[#8b2b00] text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Nộp / Tải Lên Bài Tập
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row gap-4 justify-between">
-                    <input type="text" id="assignment-search" oninput="renderAssignments()" placeholder="Tìm tên bài tập, môn học..." class="px-4 py-2 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow text-slate-800 dark:text-slate-100">
-                    <select id="assignment-status-filter" onchange="renderAssignments()" class="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-slate-800 dark:text-slate-100">
-                        <option value="ALL">Tất cả trạng thái</option>
-                        <option value="Mới">Mới</option>
-                        <option value="Đang làm">Đang làm</option>
-                        <option value="Đã nộp/Đã hoàn thành">Đã nộp / Đã hoàn thành</option>
-                    </select>
-                </div>
-
-                <div id="assignments-list" class="space-y-4">
-                    <!-- Dynamic Data -->
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
+                    <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                        <thead class="bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 font-bold uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700">
+                            <tr>
+                                <th class="px-6 py-4">Tên Bài Tập</th>
+                                <th class="px-6 py-4">Môn Học</th>
+                                <th class="px-6 py-4">Người Nộp</th>
+                                <th class="px-6 py-4 text-right">Tải / Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assignments-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
+                            <!-- Dynamic Data -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- TAB 4: TÀI LIỆU -->
+            <!-- TAB 4: KHO TÀI LIỆU GỐC -->
             <div id="section-documents" class="space-y-6 hidden">
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
@@ -340,59 +380,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ASSIGNMENT -->
-    <div id="modal-assignment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50">
-                <h3 class="font-bold text-base text-slate-800 dark:text-white">Tạo / Chỉnh Sửa Bài Tập</h3>
-                <button type="button" onclick="closeAssignmentModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form id="assignment-form" onsubmit="saveAssignment(event)" class="p-6 space-y-4 text-sm">
-                <input type="hidden" id="assignment-id">
-
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Tên Bài Tập *</label>
-                    <input type="text" id="assignment-title" required placeholder="VD: Báo Cáo Thực Hành" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Môn Học *</label>
-                        <input type="text" id="assignment-subject" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Hạn Nộp</label>
-                        <input type="date" id="assignment-deadline" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Trạng Thái</label>
-                    <select id="assignment-status" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
-                        <option value="Mới">Mới</option>
-                        <option value="Đang làm">Đang làm</option>
-                        <option value="Đã nộp/Đã hoàn thành">Đã nộp / Đã hoàn thành</option>
-                    </select>
-                </div>
-
-                <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-3">
-                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Nộp Bài Tập (Link hoặc Tệp)</label>
-                    <div>
-                        <label class="block text-slate-500 dark:text-slate-400 mb-1">Cách 1: Link bài nộp (Drive/Github)</label>
-                        <input type="url" id="assignment-link" placeholder="https://..." class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                    </div>
-                    <div>
-                        <label class="block text-slate-500 dark:text-slate-400 mb-1">Cách 2: Tải tệp lớn từ máy tính (Supabase Cloud Storage)</label>
-                        <input type="file" id="assignment-file-input" class="w-full text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 bg-white dark:bg-slate-900">
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-                    <button type="button" onclick="closeAssignmentModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold">Hủy</button>
-                    <button type="submit" id="assignment-submit-btn" class="px-5 py-2.5 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-xl font-semibold">Lưu Bài Tập</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- FOOTER -->
     <footer class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-sm text-slate-500 dark:text-slate-400">
         <p class="font-bold text-slate-700 dark:text-slate-200">NHÓM 2 - CNCN | HỆ THỐNG QUẢN LÝ VÀ CHIA SẺ HỌC TẬP</p>
@@ -452,7 +439,7 @@
         let currentUser = null;
 
         const MEMBERS_PATH = collection(db, 'members');
-        const DOCUMENTS_PATH = collection(db, 'documents'); // TẤT CẢ TÀI LIỆU VÀ BÀI TẬP DÙNG CHUNG PATH NÀY
+        const DOCUMENTS_PATH = collection(db, 'documents');
 
         window.cloudData = {
             members: [],
@@ -526,7 +513,7 @@
             }
         };
 
-        // --- UNIFIED CLOUD ACTIONS (SAVE/DELETE FOR BOTH ASSIGNMENTS AND DOCUMENTS) ---
+        // --- UNIFIED CLOUD ACTIONS FOR BOTH SECTIONS ---
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
@@ -535,10 +522,10 @@
                 } else {
                     await addDoc(DOCUMENTS_PATH, { ...docObj, createdAt: new Date().toISOString() });
                 }
-                window.showToast(docObj.itemType === 'assignment' ? "Đã lưu bài tập!" : "Đã tải tài liệu lên!", "success");
+                window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
             } catch (err) {
                 console.error("Lỗi khi lưu dữ liệu:", err);
-                window.showToast("Lỗi khi lưu dữ liệu lên Firebase!", "error");
+                window.showToast("Lỗi khi lưu dữ liệu!", "error");
             }
         };
 
@@ -552,7 +539,7 @@
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
 
-                // Xóa khỏi Firebase Database
+                // Xóa khỏi Firebase
                 await deleteDoc(doc(db, 'documents', id));
                 window.showToast("Đã xóa khỏi hệ thống!", "info");
             } catch (err) {
@@ -758,163 +745,94 @@
             closeMemberModal();
         }
 
-        // RENDER ASSIGNMENTS (ĐỌC TỪ DATABASE CHUNG DOCUMENTS)
-        window.renderAssignments = function() {
-            const list = document.getElementById('assignments-list');
-            if (!list) return;
-            const search = document.getElementById('assignment-search').value.toLowerCase();
-            const statusFilter = document.getElementById('assignment-status-filter').value;
-
-            list.innerHTML = '';
-            // Lọc ra các mục có itemType là assignment (hoặc mặc định nếu có tiêu đề bài tập)
-            const allDocs = window.cloudData.documents || [];
-            const assignments = allDocs.filter(item => item.itemType === 'assignment' || item.status);
-
-            const filtered = assignments.filter(a => {
-                const matchSearch = (a.title || '').toLowerCase().includes(search) || (a.subject || '').toLowerCase().includes(search);
-                const matchStatus = statusFilter === 'ALL' || a.status === statusFilter;
-                return matchSearch && matchStatus;
-            });
-
-            if (filtered.length === 0) {
-                list.innerHTML = `<div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-8 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-center font-medium text-slate-400 text-sm">Chưa có bài tập nào.</div>`;
-                return;
+        // --- BÀI TẬP NHÓM (HỆ THỐNG XỬ LÝ COPY HOÀN TOÀN TỪ KHO TÀI LIỆU) ---
+        function toggleAsgUploadType() {
+            const type = document.getElementById('asg-upload-type').value;
+            if (type === 'file') {
+                document.getElementById('asg-upload-file-container').classList.remove('hidden');
+                document.getElementById('asg-upload-link-container').classList.add('hidden');
+            } else {
+                document.getElementById('asg-upload-file-container').classList.add('hidden');
+                document.getElementById('asg-upload-link-container').classList.remove('hidden');
             }
-
-            filtered.forEach(a => {
-                let statusBadge = 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/50';
-                if (a.status === 'Đang làm') statusBadge = 'bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/50';
-                if (a.status === 'Đã nộp/Đã hoàn thành') statusBadge = 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
-
-                const card = document.createElement('div');
-                card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4 text-sm group hover:shadow-md transition-all";
-                
-                let fileButton = '';
-                if (a.fileUrl) {
-                    fileButton = `<a href="${a.fileUrl}" target="_blank" download="${a.fileName || 'bai-tap'}" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 rounded-xl px-4 py-2 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-file-arrow-down text-base"></i> Tải Tệp Bài Nộp (${a.fileName || 'Tệp đính kèm'})</a>`;
-                }
-
-                let linkButton = '';
-                if (a.link) {
-                    linkButton = `<a href="${a.link}" target="_blank" class="bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 rounded-xl px-4 py-2 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up-right-from-square text-base"></i> Mở Link Bài Nộp</a>`;
-                }
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start gap-3">
-                        <div>
-                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase bg-blue-50 dark:bg-blue-900/40 border border-blue-100 dark:border-blue-800/50 px-2.5 py-1 rounded-md">${a.subject || 'Môn học'}</span>
-                            <h3 class="font-bold text-slate-900 dark:text-white text-base mt-2">${a.title}</h3>
-                        </div>
-                        <span class="text-xs px-2.5 py-1 rounded-md font-bold border ${statusBadge}">${a.status}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-700">
-                        <span>Hạn nộp: <strong class="text-slate-800 dark:text-slate-200">${a.deadline || 'Chưa xếp'}</strong></span>
-                        
-                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <button type="button" onclick="openAssignmentModal('${a.id}')" title="Sửa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                            <button type="button" onclick="deleteAssignment('${a.id}')" title="Xóa bài tập" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-600 dark:text-slate-300 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="space-y-2 pt-1">
-                        ${fileButton}
-                        ${linkButton}
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        };
-
-        function openAssignmentModal(id = null) {
-            const modal = document.getElementById('modal-assignment');
-            document.getElementById('assignment-form').reset();
-            document.getElementById('assignment-id').value = '';
-
-            if (id) {
-                const a = window.cloudData.documents.find(item => item.id === id);
-                if (a) {
-                    document.getElementById('assignment-id').value = a.id;
-                    document.getElementById('assignment-title').value = a.title;
-                    document.getElementById('assignment-subject').value = a.subject || a.category || '';
-                    document.getElementById('assignment-deadline').value = a.deadline || '';
-                    document.getElementById('assignment-status').value = a.status || 'Mới';
-                    document.getElementById('assignment-link').value = a.link || '';
-                }
-            }
-            modal.classList.remove('hidden');
         }
 
-        function closeAssignmentModal() {
-            document.getElementById('modal-assignment').classList.add('hidden');
-        }
-
-        async function saveAssignment(e) {
+        async function handleAsgSubmit(e) {
             e.preventDefault();
-            const submitBtn = document.getElementById('assignment-submit-btn');
-            const id = document.getElementById('assignment-id').value;
-            const title = document.getElementById('assignment-title').value.trim();
-            const subject = document.getElementById('assignment-subject').value.trim();
-            const deadline = document.getElementById('assignment-deadline').value;
-            const status = document.getElementById('assignment-status').value;
-            const link = document.getElementById('assignment-link').value.trim();
-            const fileInput = document.getElementById('assignment-file-input');
+            const submitBtn = document.getElementById('asg-submit-btn');
+            const title = document.getElementById('asg-title').value.trim();
+            const category = document.getElementById('asg-category').value.trim();
+            const author = document.getElementById('asg-author').value.trim();
+            const uploadType = document.getElementById('asg-upload-type').value;
 
-            let existingAssignment = null;
-            if (id) {
-                existingAssignment = (window.cloudData.documents || []).find(item => item.id === id);
-            }
-
-            let fileResult = null;
-
-            if (fileInput.files.length > 0) {
+            if (uploadType === 'file') {
+                const fileInput = document.getElementById('asg-file-input');
+                if (!fileInput.files.length) return window.showToast("Vui lòng chọn tệp bài tập!", "error");
+                
                 const file = fileInput.files[0];
+                
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải tệp...`;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải bài tập lên...`;
                 window.showToast("Đang tải tệp bài tập lên Supabase...", "info");
 
                 try {
-                    if (existingAssignment && existingAssignment.filePath) {
-                        await window.deleteFileFromSupabase(existingAssignment.filePath);
-                    }
-                    fileResult = await uploadFileFree(file);
-                } catch (err) {
-                    window.showToast(err.message || "Lỗi khi tải tệp bài tập lên!", "error");
+                    const uploadResult = await uploadFileFree(file);
+                    await window.saveDocumentToCloud({ 
+                        itemType: 'assignment',
+                        title, 
+                        category, 
+                        author, 
+                        url: uploadResult.publicUrl, 
+                        filePath: uploadResult.filePath, 
+                        type: 'file' 
+                    });
+                    document.getElementById('asg-upload-form').reset();
+                } catch (error) {
+                    console.error("Lỗi upload bài tập:", error);
+                    window.showToast(error.message || "Lỗi khi tải bài tập lên!", "error");
+                } finally {
                     submitBtn.disabled = false;
-                    submitBtn.innerText = "Lưu Bài Tập";
-                    return;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Nộp / Tải Lên Bài Tập`;
                 }
+            } else {
+                const link = document.getElementById('asg-link-input').value.trim();
+                if (!link) return window.showToast("Vui lòng nhập liên kết bài tập!", "error");
+                
+                await window.saveDocumentToCloud({ itemType: 'assignment', title, category, author, url: link, type: 'link' });
+                document.getElementById('asg-upload-form').reset();
             }
-
-            const asgObj = { 
-                id: id || null, 
-                itemType: 'assignment', // ĐÁNH DẤU LÀ BÀI TẬP
-                title, 
-                subject, 
-                category: subject,
-                deadline, 
-                status, 
-                link,
-                fileUrl: fileResult ? fileResult.publicUrl : (existingAssignment ? existingAssignment.fileUrl || '' : ''),
-                filePath: fileResult ? fileResult.filePath : (existingAssignment ? existingAssignment.filePath || '' : ''),
-                fileName: fileResult ? fileInput.files[0].name : (existingAssignment ? existingAssignment.fileName || '' : '')
-            };
-
-            window.saveDocumentToCloud(asgObj);
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Lưu Bài Tập";
-            closeAssignmentModal();
         }
 
-        window.deleteAssignment = function(id) {
-            if (confirm("Xóa bài tập này khỏi hệ thống?")) {
-                if (typeof window.deleteDocumentFromCloud === 'function') {
-                    window.deleteDocumentFromCloud(id);
-                } else {
-                    window.showToast("Đang kết nối Firebase, vui lòng thử lại sau giây lát!", "error");
-                }
+        window.renderAssignments = function() {
+            const tbody = document.getElementById('assignments-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const allDocs = window.cloudData.documents || [];
+            const assignments = allDocs.filter(item => item.itemType === 'assignment');
+
+            if (assignments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có bài tập nào được nộp.</td></tr>`;
+                return;
             }
+
+            assignments.forEach(a => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100 text-base">${a.title}</td>
+                    <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${a.category || 'Môn học'}</span></td>
+                    <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${a.author || 'Chưa rõ'}</td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>
+                        <button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         };
 
-        // RENDER DOCUMENTS (CHỈ LỌC CÁC MỤC TÀI LIỆU CÓ itemType = 'document')
+        // --- KHO TÀI LIỆU GỐC ---
         function toggleUploadType() {
             const type = document.getElementById('doc-upload-type').value;
             if (type === 'file') {
@@ -978,7 +896,6 @@
             tbody.innerHTML = '';
             
             const allDocs = window.cloudData.documents || [];
-            // Lọc ra các mục thuộc Kho Tài Liệu
             const documents = allDocs.filter(item => item.itemType === 'document' || (!item.itemType && !item.status));
 
             if (documents.length === 0) {
@@ -994,7 +911,7 @@
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category || 'Tài liệu'}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${d.url || d.fileUrl}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
+                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
                         <button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
@@ -1003,7 +920,7 @@
         };
 
         window.deleteDoc = function(id) {
-            if (confirm("Xóa tài liệu này khỏi kho và Supabase Storage?")) {
+            if (confirm("Xóa mục này khỏi hệ thống và Supabase Storage?")) {
                 if (typeof window.deleteDocumentFromCloud === 'function') {
                     window.deleteDocumentFromCloud(id);
                 } else {
