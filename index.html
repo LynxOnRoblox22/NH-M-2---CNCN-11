@@ -552,20 +552,17 @@
         window.deleteAssignmentFromCloud = async function(id) {
             if (!currentUser || !id) return;
             try {
-                // Tìm bài tập cần xóa trong mảng dữ liệu hiện tại
                 const assignmentToDelete = (window.cloudData.assignments || []).find(a => a.id === id);
                 
-                // Nếu bài tập có lưu tệp trên Supabase Storage, tiến hành xóa tệp đó trước
                 if (assignmentToDelete && assignmentToDelete.filePath) {
                     await window.deleteFileFromSupabase(assignmentToDelete.filePath);
                 }
 
-                // Xóa bài tập khỏi Firestore Database
                 await deleteDoc(doc(db, 'assignments', id));
-                window.showToast("Đã xóa bài tập và tệp đính kèm!", "info");
+                window.showToast("Đã xóa bài tập thành công!", "info");
             } catch (err) {
                 console.error("Lỗi khi xóa bài tập:", err);
-                window.showToast("Lỗi khi xóa bài tập!", "error");
+                window.showToast("Lỗi khi xóa bài tập khỏi Firebase!", "error");
             }
         };
 
@@ -590,7 +587,7 @@
                 }
 
                 await deleteDoc(doc(db, 'documents', id));
-                window.showToast("Đã xóa tài liệu khỏi hệ thống và Supabase!", "info");
+                window.showToast("Đã xóa tài liệu khỏi hệ thống!", "info");
             } catch (err) {
                 console.error("Lỗi khi xóa tài liệu:", err);
                 window.showToast("Lỗi khi xóa tài liệu!", "error");
@@ -892,7 +889,6 @@
             const link = document.getElementById('assignment-link').value.trim();
             const fileInput = document.getElementById('assignment-file-input');
 
-            // Lấy thông tin bài tập cũ nếu đang ở chế độ chỉnh sửa
             let existingAssignment = null;
             if (id) {
                 existingAssignment = (window.cloudData.assignments || []).find(item => item.id === id);
@@ -937,11 +933,15 @@
             closeAssignmentModal();
         }
 
-        function deleteAssignment(id) {
+        window.deleteAssignment = function(id) {
             if (confirm("Xóa bài tập này khỏi hệ thống?")) {
-                window.deleteAssignmentFromCloud(id);
+                if (typeof window.deleteAssignmentFromCloud === 'function') {
+                    window.deleteAssignmentFromCloud(id);
+                } else {
+                    window.showToast("Đang kết nối Firebase, vui lòng thử lại sau giây lát!", "error");
+                }
             }
-        }
+        };
 
         // RENDER DOCUMENTS
         function toggleUploadType() {
@@ -1027,11 +1027,15 @@
             });
         };
 
-        function deleteDoc(id) {
+        window.deleteDoc = function(id) {
             if (confirm("Xóa tài liệu này khỏi kho và Supabase Storage?")) {
-                window.deleteDocumentFromCloud(id);
+                if (typeof window.deleteDocumentFromCloud === 'function') {
+                    window.deleteDocumentFromCloud(id);
+                } else {
+                    window.showToast("Đang kết nối Firebase, vui lòng thử lại sau giây lát!", "error");
+                }
             }
-        }
+        };
     </script>
 </body>
 </html>
