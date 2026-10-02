@@ -452,12 +452,10 @@
         let currentUser = null;
 
         const MEMBERS_PATH = collection(db, 'members');
-        const ASSIGNMENTS_PATH = collection(db, 'assignments');
-        const DOCUMENTS_PATH = collection(db, 'documents');
+        const DOCUMENTS_PATH = collection(db, 'documents'); // TẤT CẢ TÀI LIỆU VÀ BÀI TẬP DÙNG CHUNG PATH NÀY
 
         window.cloudData = {
             members: [],
-            assignments: [],
             documents: []
         };
 
@@ -504,17 +502,11 @@
                 if (typeof window.renderMembers === 'function') window.renderMembers();
             });
 
-            onSnapshot(ASSIGNMENTS_PATH, (snapshot) => {
-                const list = [];
-                snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
-                window.cloudData.assignments = list;
-                if (typeof window.renderAssignments === 'function') window.renderAssignments();
-            });
-
             onSnapshot(DOCUMENTS_PATH, (snapshot) => {
                 const list = [];
                 snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
                 window.cloudData.documents = list;
+                if (typeof window.renderAssignments === 'function') window.renderAssignments();
                 if (typeof window.renderDocuments === 'function') window.renderDocuments();
             });
         }
@@ -534,46 +526,19 @@
             }
         };
 
-        // --- ASSIGNMENT CLOUD ACTIONS ---
-        window.saveAssignmentToCloud = async function(asgObj) {
-            if (!currentUser) return;
-            try {
-                if (asgObj.id) {
-                    await setDoc(doc(db, 'assignments', asgObj.id), asgObj, { merge: true });
-                } else {
-                    await addDoc(ASSIGNMENTS_PATH, { ...asgObj, createdAt: new Date().toISOString() });
-                }
-                window.showToast("Đã lưu thông tin bài tập!", "success");
-            } catch (err) {
-                window.showToast("Lỗi khi lưu bài tập!", "error");
-            }
-        };
-
-        window.deleteAssignmentFromCloud = async function(id) {
-            if (!currentUser || !id) return;
-            try {
-                const assignmentToDelete = (window.cloudData.assignments || []).find(a => a.id === id);
-                
-                if (assignmentToDelete && assignmentToDelete.filePath) {
-                    await window.deleteFileFromSupabase(assignmentToDelete.filePath);
-                }
-
-                await deleteDoc(doc(db, 'assignments', id));
-                window.showToast("Đã xóa bài tập thành công!", "info");
-            } catch (err) {
-                console.error("Lỗi khi xóa bài tập:", err);
-                window.showToast("Lỗi khi xóa bài tập khỏi Firebase!", "error");
-            }
-        };
-
-        // --- DOCUMENT CLOUD ACTIONS ---
+        // --- UNIFIED CLOUD ACTIONS (SAVE/DELETE FOR BOTH ASSIGNMENTS AND DOCUMENTS) ---
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
-                await addDoc(DOCUMENTS_PATH, { ...docObj, createdAt: new Date().toISOString() });
-                window.showToast("Đã tải tài liệu lên thành công!", "success");
+                if (docObj.id) {
+                    await setDoc(doc(db, 'documents', docObj.id), docObj, { merge: true });
+                } else {
+                    await addDoc(DOCUMENTS_PATH, { ...docObj, createdAt: new Date().toISOString() });
+                }
+                window.showToast(docObj.itemType === 'assignment' ? "Đã lưu bài tập!" : "Đã tải tài liệu lên!", "success");
             } catch (err) {
-                window.showToast("Lỗi khi tải tài liệu!", "error");
+                console.error("Lỗi khi lưu dữ liệu:", err);
+                window.showToast("Lỗi khi lưu dữ liệu lên Firebase!", "error");
             }
         };
 
@@ -582,15 +547,17 @@
             try {
                 const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
                 
+                // Xóa file trên Supabase Storage nếu có
                 if (docToDelete && docToDelete.filePath) {
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
 
+                // Xóa khỏi Firebase Database
                 await deleteDoc(doc(db, 'documents', id));
-                window.showToast("Đã xóa tài liệu khỏi hệ thống!", "info");
+                window.showToast("Đã xóa khỏi hệ thống!", "info");
             } catch (err) {
-                console.error("Lỗi khi xóa tài liệu:", err);
-                window.showToast("Lỗi khi xóa tài liệu!", "error");
+                console.error("Lỗi khi xóa:", err);
+                window.showToast("Lỗi khi xóa mục này!", "error");
             }
         };
     </script>
@@ -791,7 +758,7 @@
             closeMemberModal();
         }
 
-        // RENDER ASSIGNMENTS
+        // RENDER ASSIGNMENTS (ĐỌC TỪ DATABASE CHUNG DOCUMENTS)
         window.renderAssignments = function() {
             const list = document.getElementById('assignments-list');
             if (!list) return;
@@ -799,7 +766,9 @@
             const statusFilter = document.getElementById('assignment-status-filter').value;
 
             list.innerHTML = '';
-            const assignments = window.cloudData.assignments || [];
+            // Lọc ra các mục có itemType là assignment (hoặc mặc định nếu có tiêu đề bài tập)
+            const allDocs = window.cloudData.documents || [];
+            const assignments = allDocs.filter(item => item.itemType === 'assignment' || item.status);
 
             const filtered = assignments.filter(a => {
                 const matchSearch = (a.title || '').toLowerCase().includes(search) || (a.subject || '').toLowerCase().includes(search);
@@ -861,13 +830,13 @@
             document.getElementById('assignment-id').value = '';
 
             if (id) {
-                const a = window.cloudData.assignments.find(item => item.id === id);
+                const a = window.cloudData.documents.find(item => item.id === id);
                 if (a) {
                     document.getElementById('assignment-id').value = a.id;
                     document.getElementById('assignment-title').value = a.title;
-                    document.getElementById('assignment-subject').value = a.subject;
+                    document.getElementById('assignment-subject').value = a.subject || a.category || '';
                     document.getElementById('assignment-deadline').value = a.deadline || '';
-                    document.getElementById('assignment-status').value = a.status;
+                    document.getElementById('assignment-status').value = a.status || 'Mới';
                     document.getElementById('assignment-link').value = a.link || '';
                 }
             }
@@ -891,7 +860,7 @@
 
             let existingAssignment = null;
             if (id) {
-                existingAssignment = (window.cloudData.assignments || []).find(item => item.id === id);
+                existingAssignment = (window.cloudData.documents || []).find(item => item.id === id);
             }
 
             let fileResult = null;
@@ -917,8 +886,10 @@
 
             const asgObj = { 
                 id: id || null, 
+                itemType: 'assignment', // ĐÁNH DẤU LÀ BÀI TẬP
                 title, 
                 subject, 
+                category: subject,
                 deadline, 
                 status, 
                 link,
@@ -927,7 +898,7 @@
                 fileName: fileResult ? fileInput.files[0].name : (existingAssignment ? existingAssignment.fileName || '' : '')
             };
 
-            window.saveAssignmentToCloud(asgObj);
+            window.saveDocumentToCloud(asgObj);
             submitBtn.disabled = false;
             submitBtn.innerText = "Lưu Bài Tập";
             closeAssignmentModal();
@@ -935,15 +906,15 @@
 
         window.deleteAssignment = function(id) {
             if (confirm("Xóa bài tập này khỏi hệ thống?")) {
-                if (typeof window.deleteAssignmentFromCloud === 'function') {
-                    window.deleteAssignmentFromCloud(id);
+                if (typeof window.deleteDocumentFromCloud === 'function') {
+                    window.deleteDocumentFromCloud(id);
                 } else {
                     window.showToast("Đang kết nối Firebase, vui lòng thử lại sau giây lát!", "error");
                 }
             }
         };
 
-        // RENDER DOCUMENTS
+        // RENDER DOCUMENTS (CHỈ LỌC CÁC MỤC TÀI LIỆU CÓ itemType = 'document')
         function toggleUploadType() {
             const type = document.getElementById('doc-upload-type').value;
             if (type === 'file') {
@@ -976,6 +947,7 @@
                 try {
                     const uploadResult = await uploadFileFree(file);
                     await window.saveDocumentToCloud({ 
+                        itemType: 'document',
                         title, 
                         category, 
                         author, 
@@ -995,7 +967,7 @@
                 const link = document.getElementById('doc-link-input').value.trim();
                 if (!link) return window.showToast("Vui lòng nhập liên kết!", "error");
                 
-                await window.saveDocumentToCloud({ title, category, author, url: link, type: 'link' });
+                await window.saveDocumentToCloud({ itemType: 'document', title, category, author, url: link, type: 'link' });
                 document.getElementById('doc-upload-form').reset();
             }
         }
@@ -1004,7 +976,10 @@
             const tbody = document.getElementById('documents-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
-            const documents = window.cloudData.documents || [];
+            
+            const allDocs = window.cloudData.documents || [];
+            // Lọc ra các mục thuộc Kho Tài Liệu
+            const documents = allDocs.filter(item => item.itemType === 'document' || (!item.itemType && !item.status));
 
             if (documents.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có tài liệu nào.</td></tr>`;
@@ -1016,10 +991,10 @@
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
                 tr.innerHTML = `
                     <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100 text-base">${d.title}</td>
-                    <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category}</span></td>
-                    <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author}</td>
+                    <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${d.category || 'Tài liệu'}</span></td>
+                    <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4 text-right">
-                        <a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
+                        <a href="${d.url || d.fileUrl}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>
                         <button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
