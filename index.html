@@ -183,7 +183,7 @@
                 <div id="members-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
             </div>
 
-            <!-- TAB 3: BÀI TẬP (Cập nhật giao diện form + table đồng bộ kho tài liệu) -->
+            <!-- TAB 3: BÀI TẬP -->
             <div id="section-assignments" class="space-y-6 hidden">
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
@@ -523,10 +523,14 @@
         window.saveAssignmentToCloud = async function(asgObj) {
             if (!currentUser) return;
             try {
+                // Loại bỏ trường id: null trước khi đẩy lên Firestore để Firebase tự tạo Document ID chuẩn
+                const dataToSave = { ...asgObj };
+                delete dataToSave.id;
+
                 if (asgObj.id) {
-                    await setDoc(doc(db, 'assignments', asgObj.id), asgObj, { merge: true });
+                    await setDoc(doc(db, 'assignments', asgObj.id), dataToSave, { merge: true });
                 } else {
-                    await addDoc(ASSIGNMENTS_PATH, { ...asgObj, createdAt: new Date().toISOString() });
+                    await addDoc(ASSIGNMENTS_PATH, { ...dataToSave, createdAt: new Date().toISOString() });
                 }
                 window.showToast("Đã lưu bài tập thành công!", "success");
             } catch (err) {
@@ -541,8 +545,13 @@
                 if (assignmentToDelete && assignmentToDelete.filePath) {
                     await window.deleteFileFromSupabase(assignmentToDelete.filePath);
                 }
+                // Xóa trực tiếp bằng id của document trên Firestore
                 await deleteDoc(doc(db, 'assignments', id));
-                window.showToast("Đã xóa bài tập và tệp đính kèm!", "info");
+                
+                window.cloudData.assignments = window.cloudData.assignments.filter(a => a.id !== id);
+                if (typeof window.renderAssignments === 'function') window.renderAssignments();
+
+                window.showToast("Đã xóa bài tập khỏi Database và Supabase!", "info");
             } catch (err) {
                 console.error("Lỗi khi xóa bài tập:", err);
                 window.showToast("Lỗi khi xóa bài tập!", "error");
@@ -568,7 +577,11 @@
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
                 await deleteDoc(doc(db, 'documents', id));
-                window.showToast("Đã xóa tài liệu khỏi hệ thống và Supabase!", "info");
+
+                window.cloudData.documents = window.cloudData.documents.filter(d => d.id !== id);
+                if (typeof window.renderDocuments === 'function') window.renderDocuments();
+
+                window.showToast("Đã xóa tài liệu khỏi Database và Supabase!", "info");
             } catch (err) {
                 console.error("Lỗi khi xóa tài liệu:", err);
                 window.showToast("Lỗi khi xóa tài liệu!", "error");
