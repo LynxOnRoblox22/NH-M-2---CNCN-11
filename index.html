@@ -60,6 +60,11 @@
         .active-sidebar i {
             color: #ffffff !important;
         }
+        .active-modal-tab {
+            border-bottom: 2px solid #a33300;
+            color: #a33300 !important;
+            font-weight: 700;
+        }
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -166,8 +171,8 @@
                     </p>
 
                     <div class="flex items-center gap-4 pt-4 border-t border-slate-700/80">
-                        <button type="button" onclick="switchTab('assignments')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-6 py-3 rounded-xl shadow-md flex items-center gap-2 transition-all">
-                            <i class="fa-solid fa-file-arrow-up text-base"></i> Nộp Bài Tập Ngay
+                        <button type="button" onclick="openUploadModal('assignment')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-6 py-3 rounded-xl shadow-md flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-plus text-base"></i> Thêm Bài Tập / Tài Liệu
                         </button>
                         <button type="button" onclick="switchTab('members')" class="bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all">
                             <i class="fa-solid fa-users text-base"></i> Thành Viên Nhóm
@@ -193,51 +198,13 @@
 
             <!-- TAB 3: BÀI TẬP NHÓM -->
             <div id="section-assignments" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex justify-between items-center">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
-                        <i class="fa-solid fa-list-check text-[#a33300]"></i> Quản Lý & Nộp Bài Tập Nhóm
+                        <i class="fa-solid fa-list-check text-[#a33300]"></i> Quản Lý & Bài Tập Nhóm
                     </h2>
-
-                    <form id="asg-upload-form" onsubmit="handleAsgSubmit(event)" class="bg-slate-50 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-sm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên bài tập *</label>
-                                <input type="text" id="asg-title" required placeholder="VD: Bài tập Thực Hành Chuyên Đề" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Môn học *</label>
-                                <input type="text" id="asg-category" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Người thực hiện / nộp *</label>
-                                <input type="text" id="asg-author" required placeholder="Tên thành viên..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức nộp</label>
-                                <select id="asg-upload-type" onchange="toggleAsgUploadType()" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
-                                    <option value="file">Tải tệp lên / upload files</option>
-                                    <option value="link">Dán liên kết bài nộp (Google Drive, Github...)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="asg-upload-file-container">
-                            <input type="file" id="asg-file-input" class="w-full text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2">
-                        </div>
-
-                        <div id="asg-upload-link-container" class="hidden">
-                            <input type="url" id="asg-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                        </div>
-
-                        <div class="flex justify-end pt-2">
-                            <button type="submit" id="asg-submit-btn" class="bg-[#a33300] hover:bg-[#8b2b00] text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Nộp / Tải Lên Bài Tập
-                            </button>
-                        </div>
-                    </form>
+                    <button type="button" onclick="openUploadModal('assignment')" class="bg-[#a33300] hover:bg-[#8b2b00] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên / Thêm Mới
+                    </button>
                 </div>
 
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
@@ -247,6 +214,7 @@
                                 <th class="px-6 py-4">Tên Bài Tập</th>
                                 <th class="px-6 py-4">Môn Học</th>
                                 <th class="px-6 py-4">Người Nộp</th>
+                                <th class="px-6 py-4">Tình Trạng</th>
                                 <th class="px-6 py-4 text-right">Tải / Xóa</th>
                             </tr>
                         </thead>
@@ -259,51 +227,13 @@
 
             <!-- TAB 4: KHO TÀI LIỆU -->
             <div id="section-documents" class="space-y-6 hidden">
-                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-5">
+                <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex justify-between items-center">
                     <h2 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-3">
                         <i class="fa-solid fa-folder-closed text-[#a33300]"></i> Chia Sẻ Tài Liệu Học Tập
                     </h2>
-
-                    <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="bg-slate-50 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-sm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên tài liệu *</label>
-                                <input type="text" id="doc-title" required placeholder="VD: Slide Chuyên Đề Học Tập" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Môn học *</label>
-                                <input type="text" id="doc-category" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Người đăng *</label>
-                                <input type="text" id="doc-author" required placeholder="Tên của bạn..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức</label>
-                                <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
-                                    <option value="file">Tải tệp lên / upload files</option>
-                                    <option value="link">Dán liên kết (Google Drive...)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="upload-file-container">
-                            <input type="file" id="doc-file-input" class="w-full text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2">
-                        </div>
-
-                        <div id="upload-link-container" class="hidden">
-                            <input type="url" id="doc-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                        </div>
-
-                        <div class="flex justify-end pt-2">
-                            <button type="submit" id="doc-submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Kho
-                            </button>
-                        </div>
-                    </form>
+                    <button type="button" onclick="openUploadModal('document')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên / Thêm Mới
+                    </button>
                 </div>
 
                 <div class="bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
@@ -326,6 +256,120 @@
         </section>
 
     </main>
+
+    <!-- MODAL: UPLOAD (DÙNG CHUNG CHO CẢ BÀI TẬP & TÀI LIỆU CÓ TAB CHUYỂN ĐỔI) -->
+    <div id="modal-upload" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+            <!-- Header Modal & Tabs -->
+            <div class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-6 pt-4 flex justify-between items-center">
+                <div class="flex space-x-6 text-sm font-bold">
+                    <button type="button" id="modal-tab-asg" onclick="switchModalTab('assignment')" class="pb-3 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Bài Tập Nhóm
+                    </button>
+                    <button type="button" id="modal-tab-doc" onclick="switchModalTab('document')" class="pb-3 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open"></i> Kho Tài Liệu
+                    </button>
+                </div>
+                <button type="button" onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 pb-3"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- FORM BÀI TẬP -->
+            <form id="asg-upload-form" onsubmit="handleAsgSubmit(event)" class="p-6 space-y-4 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên bài tập *</label>
+                        <input type="text" id="asg-title" required placeholder="VD: Bài tập Thực Hành Chuyên Đề" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Môn học *</label>
+                        <input type="text" id="asg-category" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Người thực hiện / nộp *</label>
+                        <input type="text" id="asg-author" required placeholder="Tên thành viên..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tình trạng bài tập *</label>
+                        <select id="asg-status" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
+                            <option value="Chưa làm">Chưa làm</option>
+                            <option value="Đang làm">Đang làm</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Đã nộp">Đã nộp</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức nộp</label>
+                    <select id="asg-upload-type" onchange="toggleAsgUploadType()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
+                        <option value="file">Tải tệp lên / upload files</option>
+                        <option value="link">Dán liên kết bài nộp (Google Drive, Github...)</option>
+                    </select>
+                </div>
+
+                <div id="asg-upload-file-container">
+                    <input type="file" id="asg-file-input" class="w-full text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2">
+                </div>
+
+                <div id="asg-upload-link-container" class="hidden">
+                    <input type="url" id="asg-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold">Hủy</button>
+                    <button type="submit" id="asg-submit-btn" class="bg-[#a33300] hover:bg-[#8b2b00] text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Lưu / Tải Bài Tập
+                    </button>
+                </div>
+            </form>
+
+            <!-- FORM TÀI LIỆU -->
+            <form id="doc-upload-form" onsubmit="handleDocSubmit(event)" class="p-6 space-y-4 text-sm hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên tài liệu *</label>
+                        <input type="text" id="doc-title" required placeholder="VD: Slide Chuyên Đề Học Tập" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Môn học *</label>
+                        <input type="text" id="doc-category" required placeholder="VD: Công Nghệ" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Người đăng *</label>
+                        <input type="text" id="doc-author" required placeholder="Tên của bạn..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hình thức</label>
+                        <select id="doc-upload-type" onchange="toggleUploadType()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-800 dark:text-slate-100">
+                            <option value="file">Tải tệp lên / upload files</option>
+                            <option value="link">Dán liên kết (Google Drive...)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="upload-file-container">
+                    <input type="file" id="doc-file-input" class="w-full text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2">
+                </div>
+
+                <div id="upload-link-container" class="hidden">
+                    <input type="url" id="doc-link-input" placeholder="https://drive.google.com/..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold">Hủy</button>
+                    <button type="submit" id="doc-submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Kho
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- MODAL: MEMBER -->
     <div id="modal-member" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -641,6 +685,35 @@
             if (activeSideBtn) activeSideBtn.classList.add('active-sidebar');
         }
 
+        /* LOGIC POP-UP MODAL TẢI LÊN */
+        function openUploadModal(defaultType = 'assignment') {
+            document.getElementById('modal-upload').classList.remove('hidden');
+            switchModalTab(defaultType);
+        }
+
+        function closeUploadModal() {
+            document.getElementById('modal-upload').classList.add('hidden');
+        }
+
+        function switchModalTab(type) {
+            const asgTabBtn = document.getElementById('modal-tab-asg');
+            const docTabBtn = document.getElementById('modal-tab-doc');
+            const asgForm = document.getElementById('asg-upload-form');
+            const docForm = document.getElementById('doc-upload-form');
+
+            if (type === 'assignment') {
+                asgTabBtn.classList.add('active-modal-tab');
+                docTabBtn.classList.remove('active-modal-tab');
+                asgForm.classList.remove('hidden');
+                docForm.classList.add('hidden');
+            } else {
+                docTabBtn.classList.add('active-modal-tab');
+                asgTabBtn.classList.remove('active-modal-tab');
+                docForm.classList.remove('hidden');
+                asgForm.classList.add('hidden');
+            }
+        }
+
         function generateRandomAvatar() {
             const seed = Math.random().toString(36).substring(7);
             const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
@@ -749,6 +822,7 @@
             const title = document.getElementById('asg-title').value.trim();
             const category = document.getElementById('asg-category').value.trim();
             const author = document.getElementById('asg-author').value.trim();
+            const status = document.getElementById('asg-status').value;
             const uploadType = document.getElementById('asg-upload-type').value;
 
             if (uploadType === 'file') {
@@ -768,49 +842,65 @@
                         title, 
                         category, 
                         author, 
+                        status,
                         url: uploadResult.publicUrl, 
                         filePath: uploadResult.filePath, 
                         type: 'file' 
                     });
                     document.getElementById('asg-upload-form').reset();
+                    closeUploadModal();
                 } catch (error) {
                     console.error("Lỗi upload bài tập:", error);
                     window.showToast(error.message || "Lỗi khi tải bài tập lên!", "error");
                 } finally {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Nộp / Tải Lên Bài Tập`;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu / Tải Bài Tập`;
                 }
             } else {
                 const link = document.getElementById('asg-link-input').value.trim();
                 if (!link) return window.showToast("Vui lòng nhập liên kết bài tập!", "error");
                 
-                await window.saveDocumentToCloud({ itemType: 'assignment', title, category, author, url: link, type: 'link' });
+                await window.saveDocumentToCloud({ itemType: 'assignment', title, category, author, status, url: link, type: 'link' });
                 document.getElementById('asg-upload-form').reset();
+                closeUploadModal();
             }
         }
 
-        // Cập nhật hàm lọc để không bỏ sót Bài 4 hoặc các bài tập cũ không có itemType
+        // Render bài tập bao gồm Tình Trạng và hiển thị cả dữ liệu cũ/bị ẩn như "Bài 4"
         window.renderAssignments = function() {
             const tbody = document.getElementById('assignments-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
             
             const allDocs = window.cloudData.documents || [];
-            // Hiển thị cả những bài có itemType === 'assignment' VÀ những bài không có itemType
             const assignments = allDocs.filter(item => item.itemType === 'assignment' || !item.itemType);
 
             if (assignments.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có bài tập nào được nộp.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có bài tập nào được tạo.</td></tr>`;
                 return;
             }
 
             assignments.forEach(a => {
+                // Tạo Badge Màu Tình Trạng
+                let statusBadge = `<span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs px-2.5 py-1 rounded-md font-bold">Chưa rõ</span>`;
+                const st = a.status || 'Chưa rõ';
+                if (st === 'Chưa làm') {
+                    statusBadge = `<span class="bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 text-xs px-2.5 py-1 rounded-md font-bold border border-rose-100 dark:border-rose-800/50">Chưa làm</span>`;
+                } else if (st === 'Đang làm') {
+                    statusBadge = `<span class="bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 text-xs px-2.5 py-1 rounded-md font-bold border border-amber-100 dark:border-amber-800/50">Đang làm</span>`;
+                } else if (st === 'Hoàn thành') {
+                    statusBadge = `<span class="bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 text-xs px-2.5 py-1 rounded-md font-bold border border-emerald-100 dark:border-emerald-800/50">Hoàn thành</span>`;
+                } else if (st === 'Đã nộp') {
+                    statusBadge = `<span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs px-2.5 py-1 rounded-md font-bold border border-sky-100 dark:border-sky-800/50">Đã nộp</span>`;
+                }
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
                 tr.innerHTML = `
                     <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100 text-base">${a.title || 'Chưa đặt tên'}</td>
                     <td class="px-6 py-4"><span class="bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs px-2.5 py-1 rounded-md font-bold border border-blue-100 dark:border-blue-800/50">${a.category || 'Môn học'}</span></td>
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${a.author || 'Chưa rõ'}</td>
+                    <td class="px-6 py-4">${statusBadge}</td>
                     <td class="px-6 py-4 text-right">
                         ${a.url ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>` : ''}
                         <button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa bài tập này"><i class="fa-solid fa-trash"></i></button>
@@ -861,6 +951,7 @@
                         type: 'file' 
                     });
                     document.getElementById('doc-upload-form').reset();
+                    closeUploadModal();
                 } catch (error) {
                     console.error("Lỗi upload:", error);
                     window.showToast(error.message || "Lỗi khi tải tệp lên máy chủ!", "error");
@@ -874,6 +965,7 @@
                 
                 await window.saveDocumentToCloud({ itemType: 'document', title, category, author, url: link, type: 'link' });
                 document.getElementById('doc-upload-form').reset();
+                closeUploadModal();
             }
         }
 
