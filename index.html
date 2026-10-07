@@ -277,7 +277,7 @@
 
             <!-- FORM BÀI TẬP -->
             <form id="asg-upload-form" onsubmit="handleAsgSubmit(event)" class="p-8 space-y-6 text-base">
-                <!-- Hidden Field lưu ID khi Chỉnh Sửa Bài Tập -->
+                <!-- Field ẩn lưu ID bài tập khi chỉnh sửa -->
                 <input type="hidden" id="asg-id">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -432,7 +432,7 @@
         <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase & Supabase Storage</p>
     </footer>
 
-    <!-- GLOBAL UTILITY: OWNER TOKEN LOGIC & TOAST -->
+    <!-- GLOBAL UTILITIES & EDIT MODAL FUNCTION -->
     <script>
         // Tạo hoặc lấy Device Owner Token độc nhất cho trình duyệt hiện tại
         window.getOrCreateOwnerToken = function() {
@@ -462,6 +462,48 @@
             setTimeout(() => {
                 toast.classList.add('translate-y-24', 'opacity-0');
             }, 3000);
+        };
+
+        // ĐỊNH NGHĨA HÀM SỬA BÀI TẬP TOÀN CỤC (GLOBAL)
+        window.openEditAsgModal = function(id) {
+            const allDocs = window.cloudData ? window.cloudData.documents || [] : [];
+            const asg = allDocs.find(d => d.id === id);
+            
+            if (!asg) {
+                window.showToast("Không tìm thấy bài tập!", "error");
+                return;
+            }
+
+            // Gọi mở Modal bài tập
+            if (typeof window.openUploadModal === 'function') {
+                window.openUploadModal('assignment');
+            }
+
+            // Điền lại dữ liệu cũ vào các ô nhập
+            document.getElementById('asg-id').value = asg.id;
+            document.getElementById('asg-title').value = asg.title || '';
+            document.getElementById('asg-category').value = asg.category || '';
+            document.getElementById('asg-author').value = asg.author || '';
+            document.getElementById('asg-status').value = asg.status || 'Chưa làm';
+            
+            const uploadTypeSelect = document.getElementById('asg-upload-type');
+            
+            // Nhận diện kiểu nộp bài
+            if (asg.type) {
+                uploadTypeSelect.value = asg.type;
+            } else if (asg.url) {
+                uploadTypeSelect.value = asg.url.includes('supabase.co') ? 'file' : 'link';
+            } else {
+                uploadTypeSelect.value = 'none';
+            }
+            
+            if (uploadTypeSelect.value === 'link') {
+                document.getElementById('asg-link-input').value = asg.url || '';
+            }
+
+            if (typeof window.toggleAsgUploadType === 'function') {
+                window.toggleAsgUploadType();
+            }
         };
     </script>
 
@@ -571,7 +613,6 @@
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
-                // Tự động đính kèm Token định danh thiết bị khi lưu
                 const ownerToken = window.getOrCreateOwnerToken();
                 const payload = {
                     ...docObj,
@@ -579,10 +620,10 @@
                 };
 
                 if (payload.id) {
-                    // Cập nhật bài cũ (Không tạo bài mới)
+                    // Cập nhật lại đúng document cũ nếu có ID
                     await setDoc(doc(db, 'documents', payload.id), payload, { merge: true });
                 } else {
-                    // Tạo bài tập mới
+                    // Thêm mới document nếu không có ID
                     await addDoc(DOCUMENTS_PATH, { ...payload, createdAt: new Date().toISOString() });
                 }
                 window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
@@ -596,9 +637,8 @@
             if (!currentUser || !id) return;
             try {
                 const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
-                
-                // Kiểm tra Token định danh thiết bị
                 const currentToken = window.getOrCreateOwnerToken();
+                
                 if (docToDelete && docToDelete.ownerToken && docToDelete.ownerToken !== currentToken) {
                     window.showToast("Chỉ người tải lên bằng thiết bị này mới có quyền xóa!", "error");
                     return;
@@ -718,13 +758,13 @@
         }
 
         /* LOGIC POP-UP MODAL TẢI LÊN */
-        function openUploadModal(defaultType = 'assignment') {
+        window.openUploadModal = function(defaultType = 'assignment') {
             document.getElementById('asg-upload-form').reset();
-            document.getElementById('asg-id').value = ''; // Reset ID về rỗng khi thêm bài mới
+            document.getElementById('asg-id').value = ''; // Xóa ID bài tập khi mở modal thêm mới
             document.getElementById('modal-upload').classList.remove('hidden');
-            toggleAsgUploadType();
+            window.toggleAsgUploadType();
             switchModalTab(defaultType);
-        }
+        };
 
         function closeUploadModal() {
             document.getElementById('modal-upload').classList.add('hidden');
@@ -840,7 +880,7 @@
             closeMemberModal();
         }
 
-        function toggleAsgUploadType() {
+        window.toggleAsgUploadType = function() {
             const type = document.getElementById('asg-upload-type').value;
             const fileBox = document.getElementById('asg-upload-file-container');
             const linkBox = document.getElementById('asg-upload-link-container');
@@ -852,39 +892,16 @@
                 fileBox.classList.add('hidden');
                 linkBox.classList.remove('hidden');
             } else {
-                // Tùy chọn "none": Bài tập nhắc nhở
+                // Tùy chọn "none": Nhắc nhở
                 fileBox.classList.add('hidden');
                 linkBox.classList.add('hidden');
             }
-        }
-
-        // Khai báo hàm Mở Modal Chỉnh Sửa Bài Tập lên phạm vi toàn cục (window)
-        window.openEditAsgModal = function(id) {
-            const asg = (window.cloudData.documents || []).find(d => d.id === id);
-            if (!asg) return;
-
-            openUploadModal('assignment');
-            
-            document.getElementById('asg-id').value = asg.id;
-            document.getElementById('asg-title').value = asg.title || '';
-            document.getElementById('asg-category').value = asg.category || '';
-            document.getElementById('asg-author').value = asg.author || '';
-            document.getElementById('asg-status').value = asg.status || 'Chưa làm';
-            
-            const uploadTypeSelect = document.getElementById('asg-upload-type');
-            uploadTypeSelect.value = asg.type || (asg.url ? (asg.url.includes('supabase.co') ? 'file' : 'link') : 'none');
-            
-            if (asg.type === 'link' || (!asg.type && asg.url)) {
-                document.getElementById('asg-link-input').value = asg.url || '';
-            }
-
-            toggleAsgUploadType();
         };
 
         async function handleAsgSubmit(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('asg-submit-btn');
-            const id = document.getElementById('asg-id').value; // Lấy ID bài tập
+            const id = document.getElementById('asg-id').value; // Lấy ID nếu đang sửa
             const title = document.getElementById('asg-title').value.trim();
             const category = document.getElementById('asg-category').value.trim();
             const author = document.getElementById('asg-author').value.trim();
@@ -949,7 +966,7 @@
                     type: 'link' 
                 });
             } else {
-                // Tùy chọn "none": Nhắc nhở bài tập không kèm file/link
+                // Tùy chọn "none": Tạo nhắc nhở bài tập
                 await window.saveDocumentToCloud({ 
                     id: id || null,
                     itemType: 'assignment', 
@@ -994,11 +1011,11 @@
                     statusBadge = `<span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs px-2.5 py-1 rounded-md font-bold border border-sky-100 dark:border-sky-800/50">Đã nộp</span>`;
                 }
 
-                // Kiểm tra Token định danh người tạo bài
+                // Kiểm tra Token định danh thiết bị
                 const isOwner = a.ownerToken && a.ownerToken === currentToken;
                 
                 const editButtonHTML = isOwner
-                    ? `<button type="button" onclick="openEditAsgModal('${a.id}')" class="p-2 text-slate-400 hover:text-blue-600 transition-colors text-base inline-block" title="Chỉnh sửa bài tập"><i class="fa-solid fa-pen"></i></button>`
+                    ? `<button type="button" onclick="window.openEditAsgModal('${a.id}')" class="p-2 text-slate-400 hover:text-blue-600 transition-colors text-base inline-block" title="Chỉnh sửa bài tập"><i class="fa-solid fa-pen"></i></button>`
                     : '';
 
                 const deleteActionHTML = isOwner
@@ -1100,7 +1117,7 @@
             }
 
             documents.forEach(d => {
-                // Kiểm tra Token định danh người tạo tài liệu
+                // Kiểm tra Token định danh thiết bị
                 const isOwner = d.ownerToken && d.ownerToken === currentToken;
                 const deleteActionHTML = isOwner
                     ? `<button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa tài liệu này"><i class="fa-solid fa-trash"></i></button>`
