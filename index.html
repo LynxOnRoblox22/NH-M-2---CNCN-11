@@ -530,7 +530,7 @@
             document.getElementById('asg-id').value = asg.id;
             document.getElementById('asg-title').value = asg.title || '';
             document.getElementById('asg-category').value = asg.category || '';
-            document.getElementById('asg-author').value = asg.author || '';
+            document.getElementById('asg-[#a33300]').value = asg.author || '';
             document.getElementById('asg-status').value = asg.status || 'Chưa làm';
             
             const uploadTypeSelect = document.getElementById('asg-upload-type');
@@ -552,7 +552,7 @@
             }
         };
 
-        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN
+        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ SỬA LỖI SỐNG LẠI/DÍNH DỮ LIỆU CŨ)
         window.openViewMemberModal = function(id) {
             const targetId = String(id).trim();
             const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
@@ -886,7 +886,7 @@
             document.getElementById('member-avatar-preview').src = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
         }
 
-        // RENDER DANH SÁCH THÀNH VIÊN + CLICK ĐỂ XEM CHI TIẾT
+        // RENDER DANH SÁCH THÀNH VIÊN + BẮT SỰ KIỆN CHÍNH XÁC THEO ATTRIBUTE DATA-MEMBERID
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -901,17 +901,12 @@
             members.forEach(m => {
                 const avatarUrl = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
                 const card = document.createElement('div');
-                card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
-                
-                // Khi click vào thẻ sẽ mở Modal xem chi tiết
-                card.onclick = function(e) {
-                    if (e.target.closest('.btn-edit-member')) return; // Không kích hoạt xem khi bấm nút sửa
-                    window.openViewMemberModal(m.id);
-                };
+                card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
+                card.setAttribute('data-memberid', m.id);
 
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button type="button" onclick="openMemberModal('${m.id}')" title="Chỉnh sửa thành viên" class="btn-edit-member w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
+                        <button type="button" data-editmemberid="${m.id}" title="Chỉnh sửa thành viên" class="btn-edit-member w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
@@ -933,6 +928,24 @@
                     </div>
                 `;
                 grid.appendChild(card);
+            });
+
+            // Gán sự kiện Click mở chi tiết thành viên
+            document.querySelectorAll('.member-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.btn-edit-member')) return; // Bấm nút sửa thì không mở xem
+                    const memberId = this.getAttribute('data-memberid');
+                    window.openViewMemberModal(memberId);
+                });
+            });
+
+            // Gán sự kiện Click cho nút Sửa thành viên
+            document.querySelectorAll('.btn-edit-member').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const memberId = this.getAttribute('data-editmemberid');
+                    openMemberModal(memberId);
+                });
             });
         };
 
