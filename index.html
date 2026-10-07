@@ -552,8 +552,9 @@
             }
         };
 
-        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ KHẮC PHỤC TRIỆT ĐỂ CHUỖI CỰC DÀI)
+        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ ĐƯỢC SỬA LỖI TÌM THEO ID)
         window.openViewMemberModal = function(id) {
+            if (!id) return;
             const targetId = String(id).trim();
             const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
             const m = members.find(item => String(item.id).trim() === targetId);
@@ -960,6 +961,7 @@
             });
         };
 
+        // HÀM MỞ FORM SỬA THÀNH VIÊN (ĐÃ SỬA LỖI ĐỌC DỮ LIỆU CŨ)
         function openMemberModal(id = null) {
             const modal = document.getElementById('modal-member');
             document.getElementById('member-form').reset();
@@ -967,7 +969,9 @@
 
             if (id) {
                 const targetId = String(id).trim();
-                const m = window.cloudData.members.find(item => String(item.id).trim() === targetId);
+                const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
+                const m = members.find(item => String(item.id).trim() === targetId);
+                
                 if (m) {
                     document.getElementById('member-id').value = m.id;
                     document.getElementById('member-name').value = m.name || '';
