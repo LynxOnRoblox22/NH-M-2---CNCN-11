@@ -432,7 +432,7 @@
         </div>
     </div>
 
-    <!-- MODAL: XEM CHI TIẾT THÀNH VIÊN (PHÓNG TO) -->
+    <!-- MODAL: XEM CHI TIẾT THÀNH VIÊN -->
     <div id="modal-view-member" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 relative">
             <button type="button" onclick="closeViewMemberModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 flex items-center justify-center transition-all z-10">
@@ -512,9 +512,9 @@
             }, 3000);
         };
 
-        // Hàm hỗ trợ tạo avatar mặc định không bao giờ bị lỗi ảnh
+        // Hàm kiểm tra và tạo URL avatar an toàn 100%
         window.getSafeAvatarUrl = function(avatarUrl, name) {
-            if (avatarUrl && avatarUrl.trim() !== '' && avatarUrl.length < 1000) {
+            if (avatarUrl && typeof avatarUrl === 'string' && avatarUrl.trim() !== '' && avatarUrl.startsWith('http')) {
                 return avatarUrl.trim();
             }
             const safeName = encodeURIComponent(name || 'User');
@@ -565,6 +565,8 @@
             if (!id) return;
             const targetId = String(id).trim();
             const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
+            
+            // Lọc chính xác theo id
             const m = members.find(item => String(item.id).trim() === targetId);
 
             if (!m) {
@@ -897,7 +899,7 @@
             previewImg.src = window.getSafeAvatarUrl(url, nameVal);
         }
 
-        // RENDER THÀNH VIÊN - ĐÃ ĐƯỢC CHUẨN HÓA SỰ KIỆN CLICK VÀ LẤY ID AN TOÀN
+        // RENDER THÀNH VIÊN - ĐÃ ĐƯỢC BỌC LẠI BẢO VỆ CHỐNG TRÙNG VÀ CHỐNG CLICK LẦM
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -909,17 +911,17 @@
                 return;
             }
 
-            members.forEach(m => {
-                const currentMemberId = String(m.id).trim();
+            members.forEach((m, index) => {
+                // Tạo ID duy nhất nếu dữ liệu cũ thiếu ID
+                const currentMemberId = String(m.id || `mem_${index}`).trim();
                 const displayAvatar = window.getSafeAvatarUrl(m.avatar, m.name);
 
                 const card = document.createElement('div');
-                card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
-                card.setAttribute('data-id', currentMemberId);
+                card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all";
                 
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button type="button" data-id="${currentMemberId}" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
+                        <button type="button" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
@@ -936,24 +938,26 @@
                         </div>
                     </div>
                     <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-                        <span class="flex items-center gap-1.5 truncate max-w-[180px]"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
-                        <span class="text-[#a33300] font-bold text-xs flex items-center gap-1 hover:underline">Chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+                        <span class="flex items-center gap-1.5 truncate max-w-[170px]"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
+                        <button type="button" class="btn-view-detail text-[#a33300] font-bold text-xs flex items-center gap-1 hover:underline">Chi tiết <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 `;
 
-                // Xử lý sự kiện click mở Xem chi tiết
-                card.addEventListener('click', function(e) {
-                    if (e.target.closest('.btn-edit-mem')) return; // Không mở xem chi tiết nếu bấm vào nút Sửa
-                    window.openViewMemberModal(currentMemberId);
-                });
+                // Gắn sự kiện click Xem Chi Tiết riêng biệt
+                const viewDetailBtn = card.querySelector('.btn-view-detail');
+                if (viewDetailBtn) {
+                    viewDetailBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        window.openViewMemberModal(currentMemberId);
+                    });
+                }
 
-                // Xử lý sự kiện click Nút sửa
+                // Gắn sự kiện click Sửa riêng biệt
                 const editBtn = card.querySelector('.btn-edit-mem');
                 if (editBtn) {
                     editBtn.addEventListener('click', function(e) {
-                        e.stopPropagation(); // Ngăn sự kiện mở xem chi tiết của thẻ cha
-                        const memId = this.getAttribute('data-id');
-                        openMemberModal(memId);
+                        e.stopPropagation();
+                        openMemberModal(currentMemberId);
                     });
                 }
 
