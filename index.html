@@ -552,7 +552,7 @@
             }
         };
 
-        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN
+        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ KHẮC PHỤC TRIỆT ĐỂ CHUỖI CỰC DÀI)
         window.openViewMemberModal = function(id) {
             const targetId = String(id).trim();
             const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
@@ -563,7 +563,13 @@
                 return;
             }
 
-            document.getElementById('view-member-avatar').src = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
+            // Xử lý avatar an toàn
+            let safeAvatar = m.avatar || '';
+            if (!safeAvatar || safeAvatar.length > 500) {
+                safeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
+            }
+
+            document.getElementById('view-member-avatar').src = safeAvatar;
             document.getElementById('view-member-name').innerText = m.name || 'Chưa đặt tên';
             document.getElementById('view-member-class').innerText = m.className ? `Lớp: ${m.className}` : 'Chưa xếp lớp';
             document.getElementById('view-member-role').innerText = m.role || 'Thành viên';
@@ -883,10 +889,11 @@
         }
 
         function updateAvatarPreview(url) {
-            document.getElementById('member-avatar-preview').src = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
+            let safeUrl = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
+            document.getElementById('member-avatar-preview').src = safeUrl;
         }
 
-        // RENDER DANH SÁCH THÀNH VIÊN AN TOÀN TRÁNH VỠ DỮ LIỆU CHUỖI CỦA AVATAR
+        // RENDER THÀNH VIÊN - XỬ LÝ AN TOÀN TRÁNH TRÙNG/VỠ DỮ LIỆU
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -899,24 +906,28 @@
             }
 
             members.forEach(m => {
-                const avatarUrl = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
+                const currentMemberId = String(m.id).trim();
+                
+                // Chuẩn hóa avatar tránh chuỗi Base64 dài gây vỡ DOM
+                let displayAvatar = m.avatar || '';
+                if (!displayAvatar || displayAvatar.length > 500) {
+                    displayAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
+                }
+
                 const card = document.createElement('div');
                 card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
                 
-                // Lưu ID an toàn vào dataset của phần tử DOM
-                card.dataset.memberid = m.id;
-
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button type="button" class="btn-edit-member w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
+                        <button type="button" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
                     <div>
                         <div class="flex items-center gap-4 mb-3">
-                            <img src="${avatarUrl}" alt="${m.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                            <img src="${displayAvatar}" alt="${m.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
                             <div>
-                                <h3 class="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#a33300] transition-colors">${m.name}</h3>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#a33300] transition-colors">${m.name || 'Chưa đặt tên'}</h3>
                                 <div class="flex flex-wrap items-center gap-1.5 mt-1">
                                     ${m.className ? `<span class="inline-block bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-bold px-2 py-0.5 rounded-md border border-purple-100 dark:border-purple-800/50">${m.className}</span>` : ''}
                                     <span class="inline-block bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800/50">${m.role || 'Thành viên'}</span>
@@ -930,18 +941,20 @@
                     </div>
                 `;
 
-                // Gán sự kiện trực tiếp thông qua dataset của chính phần tử
-                const editBtn = card.querySelector('.btn-edit-member');
+                // Sự kiện mở modal xem chi tiết
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.btn-edit-mem')) return;
+                    window.openViewMemberModal(currentMemberId);
+                });
+
+                // Sự kiện nút sửa
+                const editBtn = card.querySelector('.btn-edit-mem');
                 if (editBtn) {
                     editBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
-                        openMemberModal(m.id);
+                        openMemberModal(currentMemberId);
                     });
                 }
-
-                card.addEventListener('click', function() {
-                    window.openViewMemberModal(m.id);
-                });
 
                 grid.appendChild(card);
             });
@@ -953,10 +966,11 @@
             document.getElementById('member-id').value = '';
 
             if (id) {
-                const m = window.cloudData.members.find(item => String(item.id).trim() === String(id).trim());
+                const targetId = String(id).trim();
+                const m = window.cloudData.members.find(item => String(item.id).trim() === targetId);
                 if (m) {
                     document.getElementById('member-id').value = m.id;
-                    document.getElementById('member-name').value = m.name;
+                    document.getElementById('member-name').value = m.name || '';
                     document.getElementById('member-class').value = m.className || '';
                     document.getElementById('member-role').value = m.role || '';
                     document.getElementById('member-email').value = m.email || '';
@@ -982,7 +996,13 @@
             const className = document.getElementById('member-class').value.trim();
             const role = document.getElementById('member-role').value.trim();
             const email = document.getElementById('member-email').value.trim();
-            const avatar = document.getElementById('member-avatar').value.trim();
+            let avatar = document.getElementById('member-avatar').value.trim();
+            
+            // Tự động thay bằng avatar SVG nếu chuỗi nhập quá dài (Base64)
+            if (avatar.length > 500) {
+                avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name || 'member')}`;
+            }
+
             const facebook = document.getElementById('member-facebook').value.trim();
             const bio = document.getElementById('member-bio').value.trim();
 
