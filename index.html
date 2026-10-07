@@ -579,10 +579,10 @@
                 };
 
                 if (payload.id) {
-                    // Nếu đã có ID -> Cập nhật đè bài cũ (không tạo bài mới)
+                    // Cập nhật bài cũ (Không tạo bài mới)
                     await setDoc(doc(db, 'documents', payload.id), payload, { merge: true });
                 } else {
-                    // Chưa có ID -> Tạo bài tập mới
+                    // Tạo bài tập mới
                     await addDoc(DOCUMENTS_PATH, { ...payload, createdAt: new Date().toISOString() });
                 }
                 window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
@@ -720,7 +720,7 @@
         /* LOGIC POP-UP MODAL TẢI LÊN */
         function openUploadModal(defaultType = 'assignment') {
             document.getElementById('asg-upload-form').reset();
-            document.getElementById('asg-id').value = ''; // Reset ID về rỗng khi tạo mới bài tập
+            document.getElementById('asg-id').value = ''; // Reset ID về rỗng khi thêm bài mới
             document.getElementById('modal-upload').classList.remove('hidden');
             toggleAsgUploadType();
             switchModalTab(defaultType);
@@ -852,11 +852,34 @@
                 fileBox.classList.add('hidden');
                 linkBox.classList.remove('hidden');
             } else {
-                // Tùy chọn: "none" - Chỉ tạo nhắc nhở
+                // Tùy chọn "none": Bài tập nhắc nhở
                 fileBox.classList.add('hidden');
                 linkBox.classList.add('hidden');
             }
         }
+
+        // Khai báo hàm Mở Modal Chỉnh Sửa Bài Tập lên phạm vi toàn cục (window)
+        window.openEditAsgModal = function(id) {
+            const asg = (window.cloudData.documents || []).find(d => d.id === id);
+            if (!asg) return;
+
+            openUploadModal('assignment');
+            
+            document.getElementById('asg-id').value = asg.id;
+            document.getElementById('asg-title').value = asg.title || '';
+            document.getElementById('asg-category').value = asg.category || '';
+            document.getElementById('asg-author').value = asg.author || '';
+            document.getElementById('asg-status').value = asg.status || 'Chưa làm';
+            
+            const uploadTypeSelect = document.getElementById('asg-upload-type');
+            uploadTypeSelect.value = asg.type || (asg.url ? (asg.url.includes('supabase.co') ? 'file' : 'link') : 'none');
+            
+            if (asg.type === 'link' || (!asg.type && asg.url)) {
+                document.getElementById('asg-link-input').value = asg.url || '';
+            }
+
+            toggleAsgUploadType();
+        };
 
         async function handleAsgSubmit(e) {
             e.preventDefault();
@@ -868,7 +891,7 @@
             const status = document.getElementById('asg-status').value;
             const uploadType = document.getElementById('asg-upload-type').value;
 
-            // Tìm bài tập cũ nếu đang cập nhật
+            // Tìm bài tập cũ nếu đang ở chế độ chỉnh sửa
             const existingAsg = id ? (window.cloudData.documents || []).find(d => d.id === id) : null;
 
             if (uploadType === 'file') {
@@ -926,7 +949,7 @@
                     type: 'link' 
                 });
             } else {
-                // Tùy chọn: "none" - Nhắc nhở bài tập
+                // Tùy chọn "none": Nhắc nhở bài tập không kèm file/link
                 await window.saveDocumentToCloud({ 
                     id: id || null,
                     itemType: 'assignment', 
@@ -943,29 +966,6 @@
             document.getElementById('asg-id').value = '';
             closeUploadModal();
         }
-
-        // Mở Modal Chỉnh Sửa Bài Tập
-        window.openEditAsgModal = function(id) {
-            const asg = (window.cloudData.documents || []).find(d => d.id === id);
-            if (!asg) return;
-
-            openUploadModal('assignment');
-            
-            document.getElementById('asg-id').value = asg.id;
-            document.getElementById('asg-title').value = asg.title || '';
-            document.getElementById('asg-category').value = asg.category || '';
-            document.getElementById('asg-author').value = asg.author || '';
-            document.getElementById('asg-status').value = asg.status || 'Chưa làm';
-            
-            const uploadTypeSelect = document.getElementById('asg-upload-type');
-            uploadTypeSelect.value = asg.type || (asg.url ? (asg.url.includes('supabase.co') ? 'file' : 'link') : 'none');
-            
-            if (asg.type === 'link' || (!asg.type && asg.url)) {
-                document.getElementById('asg-link-input').value = asg.url || '';
-            }
-
-            toggleAsgUploadType();
-        };
 
         window.renderAssignments = function() {
             const tbody = document.getElementById('assignments-table-body');
@@ -994,7 +994,7 @@
                     statusBadge = `<span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs px-2.5 py-1 rounded-md font-bold border border-sky-100 dark:border-sky-800/50">Đã nộp</span>`;
                 }
 
-                // Kiểm tra xem thiết bị hiện tại có phải là người tạo bài tập này không
+                // Kiểm tra Token định danh người tạo bài
                 const isOwner = a.ownerToken && a.ownerToken === currentToken;
                 
                 const editButtonHTML = isOwner
@@ -1007,7 +1007,7 @@
 
                 const downloadLinkHTML = a.url 
                     ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>`
-                    : `<span class="p-2 text-amber-500/70 text-xs font-semibold inline-block" title="Chỉ là bài tập nhắc nhở, chưa nộp tệp"><i class="fa-solid fa-bell"></i> Nhắc nhở</span>`;
+                    : `<span class="p-2 text-amber-500/70 text-xs font-semibold inline-block" title="Bài tập nhắc nhở, không có tệp nộp"><i class="fa-solid fa-bell"></i> Nhắc nhở</span>`;
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
@@ -1100,7 +1100,7 @@
             }
 
             documents.forEach(d => {
-                // Kiểm tra xem thiết bị hiện tại có phải là người tạo tài liệu này không
+                // Kiểm tra Token định danh người tạo tài liệu
                 const isOwner = d.ownerToken && d.ownerToken === currentToken;
                 const deleteActionHTML = isOwner
                     ? `<button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa tài liệu này"><i class="fa-solid fa-trash"></i></button>`
