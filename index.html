@@ -257,7 +257,7 @@
 
     </main>
 
-    <!-- MODAL: UPLOAD (PHÓNG TO UI TO RÕ & TÍCH HỢP 2 TAB) -->
+    <!-- MODAL: UPLOAD -->
     <div id="modal-upload" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 md:p-6">
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-200 dark:border-slate-700">
             <!-- Header Modal & Tabs -->
@@ -428,8 +428,18 @@
         <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase & Supabase Storage</p>
     </footer>
 
-    <!-- GLOBAL TOAST NOTIFICATION UTILITY -->
+    <!-- GLOBAL UTILITY: OWNER TOKEN LOGIC & TOAST -->
     <script>
+        // Tạo hoặc lấy Device Owner Token độc nhất cho trình duyệt hiện tại
+        window.getOrCreateOwnerToken = function() {
+            let token = localStorage.getItem('device_owner_token');
+            if (!token) {
+                token = 'owner_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+                localStorage.setItem('device_owner_token', token);
+            }
+            return token;
+        };
+
         window.showToast = function(message, type = "success") {
             const toast = document.getElementById('toast');
             const toastIcon = document.getElementById('toast-icon');
@@ -557,10 +567,17 @@
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
-                if (docObj.id) {
-                    await setDoc(doc(db, 'documents', docObj.id), docObj, { merge: true });
+                // Tự động đính kèm Token định danh thiết bị khi lưu
+                const ownerToken = window.getOrCreateOwnerToken();
+                const payload = {
+                    ...docObj,
+                    ownerToken: docObj.ownerToken || ownerToken
+                };
+
+                if (payload.id) {
+                    await setDoc(doc(db, 'documents', payload.id), payload, { merge: true });
                 } else {
-                    await addDoc(DOCUMENTS_PATH, { ...docObj, createdAt: new Date().toISOString() });
+                    await addDoc(DOCUMENTS_PATH, { ...payload, createdAt: new Date().toISOString() });
                 }
                 window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
             } catch (err) {
@@ -574,6 +591,13 @@
             try {
                 const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
                 
+                // Kiểm tra Token định danh thiết bị
+                const currentToken = window.getOrCreateOwnerToken();
+                if (docToDelete && docToDelete.ownerToken && docToDelete.ownerToken !== currentToken) {
+                    window.showToast("Chỉ người tải lên bằng thiết bị này mới có quyền xóa!", "error");
+                    return;
+                }
+
                 if (docToDelete && docToDelete.filePath) {
                     await window.deleteFileFromSupabase(docToDelete.filePath);
                 }
@@ -875,6 +899,7 @@
             
             const allDocs = window.cloudData.documents || [];
             const assignments = allDocs.filter(item => item.itemType === 'assignment' || !item.itemType);
+            const currentToken = window.getOrCreateOwnerToken();
 
             if (assignments.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có bài tập nào được tạo.</td></tr>`;
@@ -894,6 +919,12 @@
                     statusBadge = `<span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs px-2.5 py-1 rounded-md font-bold border border-sky-100 dark:border-sky-800/50">Đã nộp</span>`;
                 }
 
+                // Kiểm tra xem thiết bị hiện tại có phải là người tạo bài tập này không
+                const isOwner = a.ownerToken && a.ownerToken === currentToken;
+                const deleteActionHTML = isOwner
+                    ? `<button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa bài tập này"><i class="fa-solid fa-trash"></i></button>`
+                    : `<span class="p-2 text-slate-300 dark:text-slate-600 cursor-not-allowed text-base inline-block" title="Chỉ người nộp bài này mới có quyền xóa"><i class="fa-solid fa-lock"></i></span>`;
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
                 tr.innerHTML = `
@@ -903,7 +934,7 @@
                     <td class="px-6 py-4">${statusBadge}</td>
                     <td class="px-6 py-4 text-right">
                         ${a.url ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>` : ''}
-                        <button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa bài tập này"><i class="fa-solid fa-trash"></i></button>
+                        ${deleteActionHTML}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -976,6 +1007,7 @@
             
             const allDocs = window.cloudData.documents || [];
             const documents = allDocs.filter(item => item.itemType === 'document');
+            const currentToken = window.getOrCreateOwnerToken();
 
             if (documents.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-medium text-sm">Chưa có tài liệu nào.</td></tr>`;
@@ -983,6 +1015,12 @@
             }
 
             documents.forEach(d => {
+                // Kiểm tra xem thiết bị hiện tại có phải là người tạo tài liệu này không
+                const isOwner = d.ownerToken && d.ownerToken === currentToken;
+                const deleteActionHTML = isOwner
+                    ? `<button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa tài liệu này"><i class="fa-solid fa-trash"></i></button>`
+                    : `<span class="p-2 text-slate-300 dark:text-slate-600 cursor-not-allowed text-base inline-block" title="Chỉ người nộp tài liệu này mới có quyền xóa"><i class="fa-solid fa-lock"></i></span>`;
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
                 tr.innerHTML = `
@@ -991,7 +1029,7 @@
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${d.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4 text-right">
                         ${d.url ? `<a href="${d.url}" target="_blank" download="${d.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về"><i class="fa-solid fa-download"></i></a>` : ''}
-                        <button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                        ${deleteActionHTML}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -999,6 +1037,14 @@
         };
 
         window.deleteDoc = function(id) {
+            const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
+            const currentToken = window.getOrCreateOwnerToken();
+
+            if (docToDelete && docToDelete.ownerToken && docToDelete.ownerToken !== currentToken) {
+                window.showToast("Bạn không có quyền xóa mục này!", "error");
+                return;
+            }
+
             if (confirm("Xóa mục này khỏi hệ thống và Supabase Storage?")) {
                 if (typeof window.deleteDocumentFromCloud === 'function') {
                     window.deleteDocumentFromCloud(id);
