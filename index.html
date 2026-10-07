@@ -463,7 +463,6 @@
             }, 3000);
         };
 
-        // HÀM MỞ VÀ NẠP DỮ LIỆU SỬA BÀI TẬP (SỬA LỖI MATCH ID)
         window.openEditAsgModal = function(id) {
             const targetId = String(id).trim();
             const allDocs = (window.cloudData && window.cloudData.documents) ? window.cloudData.documents : [];
@@ -478,6 +477,7 @@
                 window.openUploadModal('assignment');
             }
 
+            // Gán ID vào thẻ ẩn để phân biệt giữa Cập Nhật và Thêm Mới
             document.getElementById('asg-id').value = asg.id;
             document.getElementById('asg-title').value = asg.title || '';
             document.getElementById('asg-category').value = asg.category || '';
@@ -616,12 +616,18 @@
                     ownerToken: docObj.ownerToken || ownerToken
                 };
 
-                if (payload.id) {
-                    await setDoc(doc(db, 'documents', payload.id), payload, { merge: true });
+                // Nếu có ID (đang sửa bài tập cũ)
+                if (payload.id && String(payload.id).trim() !== "") {
+                    const docId = String(payload.id).trim();
+                    delete payload.id; // Xóa key id khỏi data ghi vào doc
+                    await setDoc(doc(db, 'documents', docId), payload, { merge: true });
+                    window.showToast("Đã cập nhật bài tập!", "success");
                 } else {
+                    // Nếu không có ID (tạo bài tập mới)
+                    delete payload.id;
                     await addDoc(DOCUMENTS_PATH, { ...payload, createdAt: new Date().toISOString() });
+                    window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
                 }
-                window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
             } catch (err) {
                 console.error("Lỗi khi lưu dữ liệu:", err);
                 window.showToast("Lỗi khi lưu dữ liệu!", "error");
@@ -1005,7 +1011,6 @@
 
                 const isOwner = a.ownerToken && a.ownerToken === currentToken;
                 
-                // Nút chỉnh sửa chuẩn hóa truyền tham số chuỗi an toàn
                 const editButtonHTML = isOwner
                     ? `<button type="button" data-asgid="${a.id}" class="btn-edit-asg p-2 text-slate-400 hover:text-blue-600 transition-colors text-base inline-block" title="Chỉnh sửa bài tập"><i class="fa-solid fa-pen"></i></button>`
                     : '';
@@ -1034,7 +1039,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Gán EventListener cho tất cả nút sửa vừa render để đảm bảo 100% bắt được sự kiện Click
             document.querySelectorAll('.btn-edit-asg').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.getAttribute('data-asgid');
