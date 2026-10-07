@@ -260,7 +260,6 @@
     <!-- MODAL: UPLOAD -->
     <div id="modal-upload" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 md:p-6">
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-200 dark:border-slate-700">
-            <!-- Header Modal & Tabs -->
             <div class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-8 pt-6 flex justify-between items-center">
                 <div class="flex space-x-8 text-base md:text-lg font-bold">
                     <button type="button" id="modal-tab-asg" onclick="switchModalTab('assignment')" class="pb-4 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center gap-2.5">
@@ -387,7 +386,7 @@
                 <input type="hidden" id="member-id">
                 
                 <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-16 h-16 rounded-xl border object-cover bg-white" alt="Avatar Preview">
+                    <img id="member-avatar-preview" src="https://ui-avatars.com/api/?name=User&background=a33300&color=fff" class="w-16 h-16 rounded-xl border object-cover bg-white" alt="Avatar Preview">
                     <div>
                         <button type="button" onclick="generateRandomAvatar()" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold px-3 py-1.5 rounded-lg border dark:border-slate-600 transition-all text-xs">
                             <i class="fa-solid fa-dice"></i> Đổi Avatar Ngẫu Nhiên
@@ -513,6 +512,15 @@
             }, 3000);
         };
 
+        // Hàm hỗ trợ tạo avatar mặc định không bao giờ bị lỗi ảnh
+        window.getSafeAvatarUrl = function(avatarUrl, name) {
+            if (avatarUrl && avatarUrl.trim() !== '' && avatarUrl.length < 1000) {
+                return avatarUrl.trim();
+            }
+            const safeName = encodeURIComponent(name || 'User');
+            return `https://ui-avatars.com/api/?name=${safeName}&background=a33300&color=fff&bold=true`;
+        };
+
         window.openEditAsgModal = function(id) {
             const targetId = String(id).trim();
             const allDocs = (window.cloudData && window.cloudData.documents) ? window.cloudData.documents : [];
@@ -552,7 +560,7 @@
             }
         };
 
-        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ ĐƯỢC SỬA LỖI TÌM THEO ID)
+        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN
         window.openViewMemberModal = function(id) {
             if (!id) return;
             const targetId = String(id).trim();
@@ -564,13 +572,7 @@
                 return;
             }
 
-            // Xử lý avatar an toàn
-            let safeAvatar = m.avatar || '';
-            if (!safeAvatar || safeAvatar.length > 500) {
-                safeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
-            }
-
-            document.getElementById('view-member-avatar').src = safeAvatar;
+            document.getElementById('view-member-avatar').src = window.getSafeAvatarUrl(m.avatar, m.name);
             document.getElementById('view-member-name').innerText = m.name || 'Chưa đặt tên';
             document.getElementById('view-member-class').innerText = m.className ? `Lớp: ${m.className}` : 'Chưa xếp lớp';
             document.getElementById('view-member-role').innerText = m.role || 'Thành viên';
@@ -883,18 +885,19 @@
         }
 
         function generateRandomAvatar() {
-            const seed = Math.random().toString(36).substring(7);
-            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+            const seed = Math.floor(Math.random() * 10000);
+            const avatarUrl = `https://ui-avatars.com/api/?name=Member+${seed}&background=random&color=fff&bold=true`;
             document.getElementById('member-avatar').value = avatarUrl;
             document.getElementById('member-avatar-preview').src = avatarUrl;
         }
 
         function updateAvatarPreview(url) {
-            let safeUrl = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
-            document.getElementById('member-avatar-preview').src = safeUrl;
+            const previewImg = document.getElementById('member-avatar-preview');
+            const nameVal = document.getElementById('member-name').value || 'User';
+            previewImg.src = window.getSafeAvatarUrl(url, nameVal);
         }
 
-        // RENDER THÀNH VIÊN - XỬ LÝ AN TOÀN TRÁNH TRÙNG/VỠ DỮ LIỆU
+        // RENDER THÀNH VIÊN - ĐÃ ĐƯỢC CHUẨN HÓA SỰ KIỆN CLICK VÀ LẤY ID AN TOÀN
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -908,25 +911,21 @@
 
             members.forEach(m => {
                 const currentMemberId = String(m.id).trim();
-                
-                // Chuẩn hóa avatar tránh chuỗi Base64 dài gây vỡ DOM
-                let displayAvatar = m.avatar || '';
-                if (!displayAvatar || displayAvatar.length > 500) {
-                    displayAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
-                }
+                const displayAvatar = window.getSafeAvatarUrl(m.avatar, m.name);
 
                 const card = document.createElement('div');
                 card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
+                card.setAttribute('data-id', currentMemberId);
                 
                 card.innerHTML = `
                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button type="button" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
+                        <button type="button" data-id="${currentMemberId}" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
                     <div>
                         <div class="flex items-center gap-4 mb-3">
-                            <img src="${displayAvatar}" alt="${m.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                            <img src="${displayAvatar}" alt="${m.name || 'Member'}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name || 'User')}&background=a33300&color=fff'">
                             <div>
                                 <h3 class="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#a33300] transition-colors">${m.name || 'Chưa đặt tên'}</h3>
                                 <div class="flex flex-wrap items-center gap-1.5 mt-1">
@@ -942,18 +941,19 @@
                     </div>
                 `;
 
-                // Sự kiện mở modal xem chi tiết
+                // Xử lý sự kiện click mở Xem chi tiết
                 card.addEventListener('click', function(e) {
-                    if (e.target.closest('.btn-edit-mem')) return;
+                    if (e.target.closest('.btn-edit-mem')) return; // Không mở xem chi tiết nếu bấm vào nút Sửa
                     window.openViewMemberModal(currentMemberId);
                 });
 
-                // Sự kiện nút sửa
+                // Xử lý sự kiện click Nút sửa
                 const editBtn = card.querySelector('.btn-edit-mem');
                 if (editBtn) {
                     editBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        openMemberModal(currentMemberId);
+                        e.stopPropagation(); // Ngăn sự kiện mở xem chi tiết của thẻ cha
+                        const memId = this.getAttribute('data-id');
+                        openMemberModal(memId);
                     });
                 }
 
@@ -961,7 +961,7 @@
             });
         };
 
-        // HÀM MỞ FORM SỬA THÀNH VIÊN (ĐÃ SỬA LỖI ĐỌC DỮ LIỆU CŨ)
+        // HÀM MỞ FORM SỬA THÀNH VIÊN
         function openMemberModal(id = null) {
             const modal = document.getElementById('modal-member');
             document.getElementById('member-form').reset();
@@ -981,7 +981,8 @@
                     document.getElementById('member-avatar').value = m.avatar || '';
                     document.getElementById('member-facebook').value = m.facebook || '';
                     document.getElementById('member-bio').value = m.bio || '';
-                    updateAvatarPreview(m.avatar);
+                    
+                    document.getElementById('member-avatar-preview').src = window.getSafeAvatarUrl(m.avatar, m.name);
                 }
             } else {
                 generateRandomAvatar();
@@ -1002,9 +1003,8 @@
             const email = document.getElementById('member-email').value.trim();
             let avatar = document.getElementById('member-avatar').value.trim();
             
-            // Tự động thay bằng avatar SVG nếu chuỗi nhập quá dài (Base64)
-            if (avatar.length > 500) {
-                avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name || 'member')}`;
+            if (!avatar || avatar.length > 800) {
+                avatar = window.getSafeAvatarUrl(null, name);
             }
 
             const facebook = document.getElementById('member-facebook').value.trim();
