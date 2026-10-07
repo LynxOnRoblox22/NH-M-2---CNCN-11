@@ -215,7 +215,7 @@
                                 <th class="px-6 py-4">Môn Học</th>
                                 <th class="px-6 py-4">Người Nộp</th>
                                 <th class="px-6 py-4">Tình Trạng</th>
-                                <th class="px-6 py-4 text-right">Tải / Sửa / Xóa</th>
+                                <th class="px-6 py-4 text-right">Tải / Xóa</th>
                             </tr>
                         </thead>
                         <tbody id="assignments-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -277,8 +277,6 @@
 
             <!-- FORM BÀI TẬP -->
             <form id="asg-upload-form" onsubmit="handleAsgSubmit(event)" class="p-8 space-y-6 text-base">
-                <input type="hidden" id="asg-id">
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block font-bold text-slate-700 dark:text-slate-200 mb-2 text-base">Tên bài tập *</label>
@@ -311,7 +309,6 @@
                     <select id="asg-upload-type" onchange="toggleAsgUploadType()" class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl font-semibold text-slate-800 dark:text-slate-100 text-base focus:ring-2 focus:ring-[#a33300] outline-none">
                         <option value="file">Tải tệp lên / upload files</option>
                         <option value="link">Dán liên kết bài nộp (Google Drive, Github...)</option>
-                        <option value="none">Chỉ tạo nhắc nhở (Không kèm file/link)</option>
                     </select>
                 </div>
 
@@ -376,18 +373,18 @@
         </div>
     </div>
 
-    <!-- MODAL: FORM MEMBER (THÊM / SỬA THÀNH VIÊN) -->
+    <!-- MODAL: MEMBER -->
     <div id="modal-member" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50">
                 <h3 class="font-bold text-base text-slate-800 dark:text-white">Thêm / Chỉnh Sửa Thành Viên</h3>
                 <button type="button" onclick="closeMemberModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <form id="member-form" onsubmit="saveMember(event)" class="p-6 space-y-4 text-sm max-h-[85vh] overflow-y-auto">
+            <form id="member-form" onsubmit="saveMember(event)" class="p-6 space-y-4 text-sm">
                 <input type="hidden" id="member-id">
                 
                 <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-16 h-16 rounded-xl border object-cover bg-white" alt="Avatar Preview">
+                    <img id="member-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=member" class="w-14 h-14 rounded-xl border object-cover bg-white" alt="Avatar Preview">
                     <div>
                         <button type="button" onclick="generateRandomAvatar()" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold px-3 py-1.5 rounded-lg border dark:border-slate-600 transition-all text-xs">
                             <i class="fa-solid fa-dice"></i> Đổi Avatar Ngẫu Nhiên
@@ -417,62 +414,11 @@
                     <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Email Liên Hệ</label>
                     <input type="email" id="member-email" placeholder="email@gmail.com" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
                 </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Link Facebook (Tùy chọn)</label>
-                    <input type="url" id="member-facebook" placeholder="https://facebook.com/username" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Giới Thiệu Ngắn</label>
-                    <textarea id="member-bio" rows="3" placeholder="Đam mê công nghệ, sở thích lập trình..." class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 outline-none"></textarea>
-                </div>
                 <div class="flex justify-end gap-3 pt-3">
                     <button type="button" onclick="closeMemberModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold">Hủy</button>
                     <button type="submit" class="px-5 py-2.5 bg-[#a33300] hover:bg-[#8b2b00] text-white rounded-xl font-semibold">Lưu</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- MODAL: XEM CHI TIẾT THÀNH VIÊN (PHÓNG TO) -->
-    <div id="modal-view-member" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 relative">
-            <button type="button" onclick="closeViewMemberModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 flex items-center justify-center transition-all z-10">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="p-8 text-center space-y-6">
-                <!-- Avatar to -->
-                <div class="relative inline-block">
-                    <img id="view-member-avatar" src="" alt="Avatar" class="w-32 h-32 rounded-3xl object-cover border-4 border-[#a33300] shadow-xl mx-auto bg-slate-100 dark:bg-slate-900">
-                </div>
-                <!-- Thông tin chính -->
-                <div>
-                    <h3 id="view-member-name" class="text-2xl font-extrabold text-slate-900 dark:text-white"></h3>
-                    <div class="flex items-center justify-center gap-2 mt-2">
-                        <span id="view-member-class" class="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full border border-purple-200 dark:border-purple-800"></span>
-                        <span id="view-member-role" class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800"></span>
-                    </div>
-                </div>
-
-                <!-- Chi tiết liên hệ & giới thiệu -->
-                <div class="space-y-3 text-left bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-sm">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-envelope text-blue-500 w-5 text-center"></i>
-                        <span id="view-member-email" class="text-slate-700 dark:text-slate-300 font-medium"></span>
-                    </div>
-                    <div class="flex items-center gap-3" id="view-member-fb-box">
-                        <i class="fa-brands fa-facebook text-blue-600 w-5 text-center text-base"></i>
-                        <a id="view-member-facebook" href="#" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline truncate">Chưa cập nhật</a>
-                    </div>
-                    <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
-                        <p class="font-bold text-slate-800 dark:text-slate-200 mb-1"><i class="fa-solid fa-quote-left text-slate-400 mr-1.5"></i>Giới thiệu:</p>
-                        <p id="view-member-bio" class="text-slate-600 dark:text-slate-400 leading-relaxed italic text-sm pl-2"></p>
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeViewMemberModal()" class="w-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-2xl transition-all">Đóng</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -482,8 +428,9 @@
         <p>© 2026 Đồng bộ thời gian thực qua Cloud Firestore Firebase & Supabase Storage</p>
     </footer>
 
-    <!-- GLOBAL UTILITIES & EDIT MODAL FUNCTION -->
+    <!-- GLOBAL UTILITY: OWNER TOKEN LOGIC & TOAST -->
     <script>
+        // Tạo hoặc lấy Device Owner Token độc nhất cho trình duyệt hiện tại
         window.getOrCreateOwnerToken = function() {
             let token = localStorage.getItem('device_owner_token');
             if (!token) {
@@ -511,86 +458,6 @@
             setTimeout(() => {
                 toast.classList.add('translate-y-24', 'opacity-0');
             }, 3000);
-        };
-
-        window.openEditAsgModal = function(id) {
-            const targetId = String(id).trim();
-            const allDocs = (window.cloudData && window.cloudData.documents) ? window.cloudData.documents : [];
-            const asg = allDocs.find(d => String(d.id).trim() === targetId);
-            
-            if (!asg) {
-                window.showToast("Không tìm thấy bài tập!", "error");
-                return;
-            }
-
-            if (typeof window.openUploadModal === 'function') {
-                window.openUploadModal('assignment');
-            }
-
-            document.getElementById('asg-id').value = asg.id;
-            document.getElementById('asg-title').value = asg.title || '';
-            document.getElementById('asg-category').value = asg.category || '';
-            document.getElementById('asg-author').value = asg.author || '';
-            document.getElementById('asg-status').value = asg.status || 'Chưa làm';
-            
-            const uploadTypeSelect = document.getElementById('asg-upload-type');
-            
-            if (asg.type) {
-                uploadTypeSelect.value = asg.type;
-            } else if (asg.url) {
-                uploadTypeSelect.value = asg.url.includes('supabase.co') ? 'file' : 'link';
-            } else {
-                uploadTypeSelect.value = 'none';
-            }
-            
-            if (uploadTypeSelect.value === 'link') {
-                document.getElementById('asg-link-input').value = asg.url || '';
-            }
-
-            if (typeof window.toggleAsgUploadType === 'function') {
-                window.toggleAsgUploadType();
-            }
-        };
-
-        // HÀM MỞ MODAL XEM CHI TIẾT THÀNH VIÊN (ĐÃ KHẮC PHỤC TRIỆT ĐỂ CHUỖI CỰC DÀI)
-        window.openViewMemberModal = function(id) {
-            const targetId = String(id).trim();
-            const members = (window.cloudData && window.cloudData.members) ? window.cloudData.members : [];
-            const m = members.find(item => String(item.id).trim() === targetId);
-
-            if (!m) {
-                window.showToast("Không tìm thấy thông tin thành viên!", "error");
-                return;
-            }
-
-            // Xử lý avatar an toàn
-            let safeAvatar = m.avatar || '';
-            if (!safeAvatar || safeAvatar.length > 500) {
-                safeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
-            }
-
-            document.getElementById('view-member-avatar').src = safeAvatar;
-            document.getElementById('view-member-name').innerText = m.name || 'Chưa đặt tên';
-            document.getElementById('view-member-class').innerText = m.className ? `Lớp: ${m.className}` : 'Chưa xếp lớp';
-            document.getElementById('view-member-role').innerText = m.role || 'Thành viên';
-            document.getElementById('view-member-email').innerText = m.email || 'Chưa cập nhật email';
-            
-            const fbLink = document.getElementById('view-member-facebook');
-            if (m.facebook) {
-                fbLink.href = m.facebook;
-                fbLink.innerText = m.facebook;
-            } else {
-                fbLink.href = '#';
-                fbLink.innerText = 'Chưa cập nhật liên kết Facebook';
-            }
-
-            document.getElementById('view-member-bio').innerText = m.bio || 'Chưa có lời giới thiệu bản thân.';
-
-            document.getElementById('modal-view-member').classList.remove('hidden');
-        };
-
-        window.closeViewMemberModal = function() {
-            document.getElementById('modal-view-member').classList.add('hidden');
         };
     </script>
 
@@ -686,17 +553,13 @@
         window.saveMemberToCloud = async function(memberObj) {
             if (!currentUser) return;
             try {
-                if (memberObj.id && String(memberObj.id).trim() !== "") {
-                    const mId = String(memberObj.id).trim();
-                    delete memberObj.id;
-                    await setDoc(doc(db, 'members', mId), memberObj, { merge: true });
+                if (memberObj.id) {
+                    await setDoc(doc(db, 'members', memberObj.id), memberObj, { merge: true });
                 } else {
-                    delete memberObj.id;
                     await addDoc(MEMBERS_PATH, { ...memberObj, createdAt: new Date().toISOString() });
                 }
                 window.showToast("Đã lưu thông tin thành viên!", "success");
             } catch (err) {
-                console.error("Lỗi khi lưu thành viên:", err);
                 window.showToast("Lỗi khi lưu thành viên!", "error");
             }
         };
@@ -704,22 +567,19 @@
         window.saveDocumentToCloud = async function(docObj) {
             if (!currentUser) return;
             try {
+                // Tự động đính kèm Token định danh thiết bị khi lưu
                 const ownerToken = window.getOrCreateOwnerToken();
                 const payload = {
                     ...docObj,
                     ownerToken: docObj.ownerToken || ownerToken
                 };
 
-                if (payload.id && String(payload.id).trim() !== "") {
-                    const docId = String(payload.id).trim();
-                    delete payload.id; 
-                    await setDoc(doc(db, 'documents', docId), payload, { merge: true });
-                    window.showToast("Đã cập nhật bài tập!", "success");
+                if (payload.id) {
+                    await setDoc(doc(db, 'documents', payload.id), payload, { merge: true });
                 } else {
-                    delete payload.id;
                     await addDoc(DOCUMENTS_PATH, { ...payload, createdAt: new Date().toISOString() });
-                    window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
                 }
+                window.showToast("Lưu thành công lên hệ thống Cloud!", "success");
             } catch (err) {
                 console.error("Lỗi khi lưu dữ liệu:", err);
                 window.showToast("Lỗi khi lưu dữ liệu!", "error");
@@ -729,9 +589,10 @@
         window.deleteDocumentFromCloud = async function(id) {
             if (!currentUser || !id) return;
             try {
-                const docToDelete = (window.cloudData.documents || []).find(d => String(d.id).trim() === String(id).trim());
-                const currentToken = window.getOrCreateOwnerToken();
+                const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
                 
+                // Kiểm tra Token định danh thiết bị
+                const currentToken = window.getOrCreateOwnerToken();
                 if (docToDelete && docToDelete.ownerToken && docToDelete.ownerToken !== currentToken) {
                     window.showToast("Chỉ người tải lên bằng thiết bị này mới có quyền xóa!", "error");
                     return;
@@ -850,13 +711,11 @@
             if (activeSideBtn) activeSideBtn.classList.add('active-sidebar');
         }
 
-        window.openUploadModal = function(defaultType = 'assignment') {
-            document.getElementById('asg-upload-form').reset();
-            document.getElementById('asg-id').value = ''; 
+        /* LOGIC POP-UP MODAL TẢI LÊN */
+        function openUploadModal(defaultType = 'assignment') {
             document.getElementById('modal-upload').classList.remove('hidden');
-            window.toggleAsgUploadType();
             switchModalTab(defaultType);
-        };
+        }
 
         function closeUploadModal() {
             document.getElementById('modal-upload').classList.add('hidden');
@@ -889,11 +748,9 @@
         }
 
         function updateAvatarPreview(url) {
-            let safeUrl = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
-            document.getElementById('member-avatar-preview').src = safeUrl;
+            document.getElementById('member-avatar-preview').src = url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=member';
         }
 
-        // RENDER THÀNH VIÊN - XỬ LÝ AN TOÀN TRÁNH TRÙNG/VỠ DỮ LIỆU
         window.renderMembers = function() {
             const grid = document.getElementById('members-grid');
             if (!grid) return;
@@ -906,28 +763,20 @@
             }
 
             members.forEach(m => {
-                const currentMemberId = String(m.id).trim();
-                
-                // Chuẩn hóa avatar tránh chuỗi Base64 dài gây vỡ DOM
-                let displayAvatar = m.avatar || '';
-                if (!displayAvatar || displayAvatar.length > 500) {
-                    displayAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name || 'member')}`;
-                }
-
+                const avatarUrl = m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`;
                 const card = document.createElement('div');
-                card.className = "member-card bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-lg transition-all cursor-pointer";
-                
+                card.className = "bg-white/90 dark:bg-slate-800/85 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-all";
                 card.innerHTML = `
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button type="button" class="btn-edit-mem w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm" title="Chỉnh sửa thành viên">
+                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <button type="button" onclick="openMemberModal('${m.id}')" title="Chỉnh sửa thành viên" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center text-xs shadow-sm">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </div>
                     <div>
                         <div class="flex items-center gap-4 mb-3">
-                            <img src="${displayAvatar}" alt="${m.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                            <img src="${avatarUrl}" alt="${m.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
                             <div>
-                                <h3 class="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#a33300] transition-colors">${m.name || 'Chưa đặt tên'}</h3>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-base">${m.name}</h3>
                                 <div class="flex flex-wrap items-center gap-1.5 mt-1">
                                     ${m.className ? `<span class="inline-block bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-bold px-2 py-0.5 rounded-md border border-purple-100 dark:border-purple-800/50">${m.className}</span>` : ''}
                                     <span class="inline-block bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800/50">${m.role || 'Thành viên'}</span>
@@ -935,27 +784,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-                        <span class="flex items-center gap-1.5 truncate max-w-[180px]"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
-                        <span class="text-[#a33300] font-bold text-xs flex items-center gap-1 hover:underline">Chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-blue-500"></i> ${m.email || 'Chưa cập nhật'}</span>
                     </div>
                 `;
-
-                // Sự kiện mở modal xem chi tiết
-                card.addEventListener('click', function(e) {
-                    if (e.target.closest('.btn-edit-mem')) return;
-                    window.openViewMemberModal(currentMemberId);
-                });
-
-                // Sự kiện nút sửa
-                const editBtn = card.querySelector('.btn-edit-mem');
-                if (editBtn) {
-                    editBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        openMemberModal(currentMemberId);
-                    });
-                }
-
                 grid.appendChild(card);
             });
         };
@@ -966,17 +798,14 @@
             document.getElementById('member-id').value = '';
 
             if (id) {
-                const targetId = String(id).trim();
-                const m = window.cloudData.members.find(item => String(item.id).trim() === targetId);
+                const m = window.cloudData.members.find(item => item.id === id);
                 if (m) {
                     document.getElementById('member-id').value = m.id;
-                    document.getElementById('member-name').value = m.name || '';
+                    document.getElementById('member-name').value = m.name;
                     document.getElementById('member-class').value = m.className || '';
                     document.getElementById('member-role').value = m.role || '';
                     document.getElementById('member-email').value = m.email || '';
                     document.getElementById('member-avatar').value = m.avatar || '';
-                    document.getElementById('member-facebook').value = m.facebook || '';
-                    document.getElementById('member-bio').value = m.bio || '';
                     updateAvatarPreview(m.avatar);
                 }
             } else {
@@ -996,119 +825,71 @@
             const className = document.getElementById('member-class').value.trim();
             const role = document.getElementById('member-role').value.trim();
             const email = document.getElementById('member-email').value.trim();
-            let avatar = document.getElementById('member-avatar').value.trim();
-            
-            // Tự động thay bằng avatar SVG nếu chuỗi nhập quá dài (Base64)
-            if (avatar.length > 500) {
-                avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name || 'member')}`;
-            }
+            const avatar = document.getElementById('member-avatar').value.trim();
 
-            const facebook = document.getElementById('member-facebook').value.trim();
-            const bio = document.getElementById('member-bio').value.trim();
-
-            window.saveMemberToCloud({ id: id || null, name, className, role, email, avatar, facebook, bio });
+            window.saveMemberToCloud({ id: id || null, name, className, role, email, avatar });
             closeMemberModal();
         }
 
-        window.toggleAsgUploadType = function() {
+        function toggleAsgUploadType() {
             const type = document.getElementById('asg-upload-type').value;
-            const fileBox = document.getElementById('asg-upload-file-container');
-            const linkBox = document.getElementById('asg-upload-link-container');
-
             if (type === 'file') {
-                fileBox.classList.remove('hidden');
-                linkBox.classList.add('hidden');
-            } else if (type === 'link') {
-                fileBox.classList.add('hidden');
-                linkBox.classList.remove('hidden');
+                document.getElementById('asg-upload-file-container').classList.remove('hidden');
+                document.getElementById('asg-upload-link-container').classList.add('hidden');
             } else {
-                fileBox.classList.add('hidden');
-                linkBox.classList.add('hidden');
+                document.getElementById('asg-upload-file-container').classList.add('hidden');
+                document.getElementById('asg-upload-link-container').classList.remove('hidden');
             }
-        };
+        }
 
         async function handleAsgSubmit(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('asg-submit-btn');
-            const id = document.getElementById('asg-id').value; 
             const title = document.getElementById('asg-title').value.trim();
             const category = document.getElementById('asg-category').value.trim();
             const author = document.getElementById('asg-author').value.trim();
             const status = document.getElementById('asg-status').value;
             const uploadType = document.getElementById('asg-upload-type').value;
 
-            const existingAsg = id ? (window.cloudData.documents || []).find(d => String(d.id).trim() === String(id).trim()) : null;
-
             if (uploadType === 'file') {
                 const fileInput = document.getElementById('asg-file-input');
-                let publicUrl = existingAsg ? existingAsg.url : '';
-                let filePath = existingAsg ? existingAsg.filePath : '';
-
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải bài tập lên...`;
-                    window.showToast("Đang tải tệp bài tập lên Supabase...", "info");
-
-                    try {
-                        const uploadResult = await uploadFileFree(file);
-                        publicUrl = uploadResult.publicUrl;
-                        filePath = uploadResult.filePath;
-                    } catch (error) {
-                        console.error("Lỗi upload bài tập:", error);
-                        window.showToast(error.message || "Lỗi khi tải bài tập lên!", "error");
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu / Tải Bài Tập`;
-                        return;
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu / Tải Bài Tập`;
-                    }
-                } else if (!id && !publicUrl) {
-                    return window.showToast("Vui lòng chọn tệp bài tập!", "error");
-                }
-
-                await window.saveDocumentToCloud({ 
-                    id: id || null,
-                    itemType: 'assignment',
-                    title, 
-                    category, 
-                    author, 
-                    status,
-                    url: publicUrl, 
-                    filePath: filePath, 
-                    type: 'file' 
-                });
-            } else if (uploadType === 'link') {
-                const link = document.getElementById('asg-link-input').value.trim();
-                if (!link && !existingAsg) return window.showToast("Vui lòng nhập liên kết bài tập!", "error");
+                if (!fileInput.files.length) return window.showToast("Vui lòng chọn tệp bài tập!", "error");
                 
-                await window.saveDocumentToCloud({ 
-                    id: id || null,
-                    itemType: 'assignment', 
-                    title, 
-                    category, 
-                    author, 
-                    status, 
-                    url: link || (existingAsg ? existingAsg.url : ''), 
-                    type: 'link' 
-                });
-            } else {
-                await window.saveDocumentToCloud({ 
-                    id: id || null,
-                    itemType: 'assignment', 
-                    title, 
-                    category, 
-                    author, 
-                    status, 
-                    url: '', 
-                    type: 'none' 
-                });
-            }
+                const file = fileInput.files[0];
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang tải bài tập lên...`;
+                window.showToast("Đang tải tệp bài tập lên Supabase...", "info");
 
-            document.getElementById('asg-upload-form').reset();
-            document.getElementById('asg-id').value = '';
-            closeUploadModal();
+                try {
+                    const uploadResult = await uploadFileFree(file);
+                    await window.saveDocumentToCloud({ 
+                        itemType: 'assignment',
+                        title, 
+                        category, 
+                        author, 
+                        status,
+                        url: uploadResult.publicUrl, 
+                        filePath: uploadResult.filePath, 
+                        type: 'file' 
+                    });
+                    document.getElementById('asg-upload-form').reset();
+                    closeUploadModal();
+                } catch (error) {
+                    console.error("Lỗi upload bài tập:", error);
+                    window.showToast(error.message || "Lỗi khi tải bài tập lên!", "error");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu / Tải Bài Tập`;
+                }
+            } else {
+                const link = document.getElementById('asg-link-input').value.trim();
+                if (!link) return window.showToast("Vui lòng nhập liên kết bài tập!", "error");
+                
+                await window.saveDocumentToCloud({ itemType: 'assignment', title, category, author, status, url: link, type: 'link' });
+                document.getElementById('asg-upload-form').reset();
+                closeUploadModal();
+            }
         }
 
         window.renderAssignments = function() {
@@ -1138,19 +919,11 @@
                     statusBadge = `<span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs px-2.5 py-1 rounded-md font-bold border border-sky-100 dark:border-sky-800/50">Đã nộp</span>`;
                 }
 
+                // Kiểm tra xem thiết bị hiện tại có phải là người tạo bài tập này không
                 const isOwner = a.ownerToken && a.ownerToken === currentToken;
-                
-                const editButtonHTML = isOwner
-                    ? `<button type="button" data-asgid="${a.id}" class="btn-edit-asg p-2 text-slate-400 hover:text-blue-600 transition-colors text-base inline-block" title="Chỉnh sửa bài tập"><i class="fa-solid fa-pen"></i></button>`
-                    : '';
-
                 const deleteActionHTML = isOwner
                     ? `<button type="button" onclick="deleteDoc('${a.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa bài tập này"><i class="fa-solid fa-trash"></i></button>`
                     : `<span class="p-2 text-slate-300 dark:text-slate-600 cursor-not-allowed text-base inline-block" title="Chỉ người nộp bài này mới có quyền xóa"><i class="fa-solid fa-lock"></i></span>`;
-
-                const downloadLinkHTML = a.url 
-                    ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>`
-                    : `<span class="p-2 text-amber-500/70 text-xs font-semibold inline-block" title="Bài tập nhắc nhở, không có tệp nộp"><i class="fa-solid fa-bell"></i> Nhắc nhở</span>`;
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
@@ -1160,19 +933,11 @@
                     <td class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">${a.author || 'Chưa rõ'}</td>
                     <td class="px-6 py-4">${statusBadge}</td>
                     <td class="px-6 py-4 text-right">
-                        ${downloadLinkHTML}
-                        ${editButtonHTML}
+                        ${a.url ? `<a href="${a.url}" target="_blank" download="${a.title}" class="p-2 text-slate-400 hover:text-emerald-600 transition-colors text-base inline-block" title="Tải về bài nộp"><i class="fa-solid fa-download"></i></a>` : ''}
                         ${deleteActionHTML}
                     </td>
                 `;
                 tbody.appendChild(tr);
-            });
-
-            document.querySelectorAll('.btn-edit-asg').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-asgid');
-                    window.openEditAsgModal(id);
-                });
             });
         };
 
@@ -1250,6 +1015,7 @@
             }
 
             documents.forEach(d => {
+                // Kiểm tra xem thiết bị hiện tại có phải là người tạo tài liệu này không
                 const isOwner = d.ownerToken && d.ownerToken === currentToken;
                 const deleteActionHTML = isOwner
                     ? `<button type="button" onclick="deleteDoc('${d.id}')" class="p-2 text-slate-400 hover:text-red-600 transition-colors text-base" title="Xóa tài liệu này"><i class="fa-solid fa-trash"></i></button>`
@@ -1271,7 +1037,7 @@
         };
 
         window.deleteDoc = function(id) {
-            const docToDelete = (window.cloudData.documents || []).find(d => String(d.id).trim() === String(id).trim());
+            const docToDelete = (window.cloudData.documents || []).find(d => d.id === id);
             const currentToken = window.getOrCreateOwnerToken();
 
             if (docToDelete && docToDelete.ownerToken && docToDelete.ownerToken !== currentToken) {
